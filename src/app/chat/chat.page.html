@@ -1,9 +1,38 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>chat</ion-title>
+  <ion-toolbar color="medium">
+    <ion-title>Denuncias vecinales</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-img src="/assets/header.png"></ion-img>
+
+  <ion-card class="welcome-card">
+    <ion-card-header>
+      <ion-card-subtitle>Bienvenido</ion-card-subtitle>
+      <ion-card-title>Contacto directo con asociaciones de ciudadanos.</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Envío de denuncias, quejas, sugerencias y anomalías urbanas. Recibidas directamente en Seguridad Pública del Ayuntamiento.</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list lines="none">
+    <ion-list-header>
+      <ion-label>Acciones</ion-label>
+    </ion-list-header>
+    <ion-item>
+      <ion-icon slot="start" color="dark" name="mail"></ion-icon>
+      <ion-label>Registrar nueva denuncia</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-icon slot="start" color="dark" name="cloud-done"></ion-icon>
+      <ion-label>Verificar estatus de denuncia</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-icon slot="start" color="dark" name="hourglass"></ion-icon>
+      <ion-label>histórico de registros</ion-label>
+    </ion-item>
+  </ion-list>
 
 </ion-content>
