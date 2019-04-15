@@ -35,7 +35,7 @@
   </ion-list>
 
   <div padding>
-    <ion-button expand="full" shape="round" color="success">Pasar asistencia</ion-button>
+    <ion-button (click)="doAttendance()" [disabled]="buttonDisabled" expand="full" shape="round" color="success">Pasar asistencia</ion-button>
   </div>
 
 </ion-content>

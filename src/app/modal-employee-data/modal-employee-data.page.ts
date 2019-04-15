@@ -12,8 +12,11 @@ export class ModalEmployeeDataPage implements OnInit {
 
   lat: number;
   lng: number;
+  buttonDisabled: boolean;
 
-  constructor(private modalCtrl: ModalController, private http: HTTP, private geolocation: Geolocation,) { }
+  constructor(private modalCtrl: ModalController, private http: HTTP, private geolocation: Geolocation) {
+    this.buttonDisabled = false;
+  }
 
   ngOnInit() {
   }
@@ -30,6 +33,10 @@ export class ModalEmployeeDataPage implements OnInit {
       this.lng = data.coords.longitude;
       console.log(this.lat + ', ' +  this.lng);
     });
+  }
+
+  doAttendance() {
+    this.modalCtrl.dismiss();
   }
 
   private _sendData() {
