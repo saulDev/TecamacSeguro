@@ -4,8 +4,6 @@ import { ModalController } from '@ionic/angular';
 import { ModalEmployeeDataPage } from '../modal-employee-data/modal-employee-data.page';
 
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { HTTP } from '@ionic-native/http/ngx';
 
 @Component({
   selector: 'app-tab1',
@@ -14,15 +12,11 @@ import { HTTP } from '@ionic-native/http/ngx';
 })
 export class Tab1Page implements OnInit {
 
-  lat: number;
-  lng: number;
   id_empleado: string;
 
   constructor(
       private barcodeScanner: BarcodeScanner,
-      private geolocation: Geolocation,
       private platform: Platform,
-      private http: HTTP,
       private modalController: ModalController
   ) { }
 
@@ -46,33 +40,5 @@ export class Tab1Page implements OnInit {
     }).catch(err => {
       console.log('Error', err);
     });*/
-  }
-
-  private _sendData() {
-    this.http.get('http://ionic.io', {id_empleado: this.id_empleado}, {})
-        .then(data => {
-
-          console.log(data.status);
-          console.log(data.data); // data received by server
-          console.log(data.headers);
-
-        })
-        .catch(error => {
-
-          console.log(error.status);
-          console.log(error.error); // error message as string
-          console.log(error.headers);
-
-        });
-  }
-
-  private _getCoords() {
-    const watch = this.geolocation.watchPosition();
-    watch.subscribe((data) => {
-      console.log(data);
-      this.lat = data.coords.latitude;
-      this.lng = data.coords.longitude;
-      console.log(this.lat + ', ' +  this.lng);
-    });
   }
 }

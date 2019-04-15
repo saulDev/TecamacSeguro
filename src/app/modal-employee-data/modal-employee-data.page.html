@@ -1,14 +1,41 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>ModalEmployeeData</ion-title>
+  <ion-toolbar color="dark">
+    <ion-title>Datos de empleado</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="dimiss()">
-        <ion-icon slot="icon-only" name="star"></ion-icon>
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-list>
+
+    <ion-item>
+      <ion-label position="stacked">Nombre</ion-label>
+      <ion-input value="José Antonio Cabrera Santos" disabled></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Grado</ion-label>
+      <ion-input value="Policía Tercero" disabled></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">ID Empleado</ion-label>
+      <ion-input value="2269" disabled></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Cuadrante</ion-label>
+      <ion-input value="11" disabled></ion-input>
+    </ion-item>
+
+  </ion-list>
+
+  <div padding>
+    <ion-button expand="full" shape="round" color="success">Pasar asistencia</ion-button>
+  </div>
 
 </ion-content>
