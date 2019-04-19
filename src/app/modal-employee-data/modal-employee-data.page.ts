@@ -25,7 +25,7 @@ export class ModalEmployeeDataPage implements OnInit {
   }
 
   ngOnInit() {
-    this._showAlert('Alerta', 'Elemento fuera del área del cuadrante asignado.');
+    // this._showAlert('Alerta', 'Elemento fuera del área del cuadrante asignado.');
   }
 
   dismiss() {

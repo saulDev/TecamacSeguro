@@ -33,12 +33,13 @@ export class Tab1Page implements OnInit {
   }
 
   openScanCamera() {
-    this.presentModal();
-    /*this.barcodeScanner.scan().then(barcodeData => {
+    this.barcodeScanner.scan().then(barcodeData => {
       this.id_empleado = barcodeData.text;
-      this._sendData();
+      if (barcodeData.text !== '') {
+        this.presentModal();
+      }
     }).catch(err => {
       console.log('Error', err);
-    });*/
+    });
   }
 }
