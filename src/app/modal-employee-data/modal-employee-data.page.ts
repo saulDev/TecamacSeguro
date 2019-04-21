@@ -3,6 +3,8 @@ import {ModalController, NavParams} from '@ionic/angular';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { HTTP } from '@ionic-native/http/ngx';
 import { AlertController } from '@ionic/angular';
+import {ILatLng, Poly} from '@ionic-native/google-maps';
+import {QuadrantsService} from '../api/quadrants.service';
 
 @Component({
   selector: 'app-modal-employee-data',
@@ -17,38 +19,53 @@ export class ModalEmployeeDataPage implements OnInit {
   clave_empleado: number;
   nombre: string;
   grado: string;
+  cuadrante: number;
+  cuadrantes: ILatLng[][];
+  cuadranteAsignado: ILatLng[];
+  subscription: any;
 
   constructor(
       private modalCtrl: ModalController,
       private http: HTTP,
       private geolocation: Geolocation,
-      public alertController: AlertController,
-      public navParams: NavParams
+      private alertController: AlertController,
+      private navParams: NavParams,
+      private quadrant: QuadrantsService
   ) {
-    this.buttonDisabled = false;
+    this.buttonDisabled = true;
     this.getEmployeeData( this.navParams.get('qr_text') );
+    this.cuadrantes = quadrant.all();
   }
 
   ngOnInit() {
-    // this._showAlert('Alerta', 'Elemento fuera del área del cuadrante asignado.');
-  }
-
-  dismiss() {
-    this.modalCtrl.dismiss();
+    
   }
 
   private _getCoords() {
     const watch = this.geolocation.watchPosition();
-    watch.subscribe((data) => {
-      console.log(data);
+    this.subscription = watch.subscribe((data) => {
       this.lat = data.coords.latitude;
       this.lng = data.coords.longitude;
       console.log(this.lat + ', ' +  this.lng);
+      // console.log( Poly.containsLocation({lat: this.lat, lng: this.lng}, this.cuadrantes[0]) );
+      if (Poly.containsLocation({ lat: 19.776817, lng: -98.976382 }, this.cuadranteAsignado) ) {
+        // @todo colocar una alerta bonita para visualizar que no esta en cuadrante.
+        this.buttonDisabled = false;
+      } else {
+
+      }
     });
   }
 
+  dismiss() {
+    this.modalCtrl.dismiss();
+    this.subscription.unsubscribe();
+  }
+
   private getEmployeeData(clave_empleado) {
-    this.http.get('http://c46b76ec.ngrok.io/cops/' + clave_empleado, {}, {Accept: 'application/json'})
+    const test_url = 'http://c64e9625.ngrok.io/';
+
+    this.http.get(test_url + 'cops/' + clave_empleado, {}, {Accept: 'application/json'})
         .then(reponse => {
 
 
@@ -56,8 +73,11 @@ export class ModalEmployeeDataPage implements OnInit {
           this.nombre = employee.nombre;
           this.grado = employee.grade.grado;
           this.clave_empleado = employee.clave_empleado;
+          // @todo Comprobar si el elemento tiene un cuadrante asignado.
+          this.cuadrante = employee.assignments[0].quadrant_id;
+          this.cuadranteAsignado = this.cuadrantes[employee.assignments[0].quadrant_id - 1];
 
-
+          this._getCoords();
         })
         .catch(error => {
           this._showAlert('Alerta', 'Elemento no encontrado en el padrón.');
@@ -70,7 +90,7 @@ export class ModalEmployeeDataPage implements OnInit {
 
   doAttendance() {
     this._showAlert('Éxito', 'Asistencia registrada correctamente.');
-    this.modalCtrl.dismiss();
+    this.dismiss();
   }
 
   private _sendData() {
@@ -101,4 +121,5 @@ export class ModalEmployeeDataPage implements OnInit {
 
     await alert.present();
   }
+
 }

@@ -12,6 +12,12 @@
 <ion-content>
   <ion-list>
 
+    <ion-item color="danger" *ngIf="buttonDisabled">
+      <ion-label>
+        No posicionado en cuadrante asignado.
+      </ion-label>
+    </ion-item>
+
     <ion-item>
       <ion-label position="stacked">Nombre</ion-label>
       <ion-input [(ngModel)]="nombre" disabled></ion-input>
@@ -29,7 +35,7 @@
 
     <ion-item>
       <ion-label position="stacked">Cuadrante</ion-label>
-      <ion-input value="x" disabled></ion-input>
+      <ion-input [(ngModel)]="cuadrante" disabled></ion-input>
     </ion-item>
 
   </ion-list>
