@@ -12,7 +12,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 })
 export class Tab1Page implements OnInit {
 
-  id_empleado: string;
+  qr_text: string;
 
   constructor(
       private barcodeScanner: BarcodeScanner,
@@ -27,14 +27,14 @@ export class Tab1Page implements OnInit {
   async presentModal() {
     const modal = await this.modalController.create({
       component: ModalEmployeeDataPage,
-      componentProps: { value: 123 }
+      componentProps: { qr_text: this.qr_text }
     });
     return await modal.present();
   }
 
   openScanCamera() {
     this.barcodeScanner.scan().then(barcodeData => {
-      this.id_empleado = barcodeData.text;
+      this.qr_text = barcodeData.text;
       if (barcodeData.text !== '') {
         this.presentModal();
       }

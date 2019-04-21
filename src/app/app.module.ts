@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { ModalEmployeeDataPageModule } from './modal-employee-data/modal-employee-data.module';
+import { FormsModule } from '@angular/forms';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -16,7 +17,7 @@ import { AppComponent } from './app.component';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, ModalEmployeeDataPageModule],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, ModalEmployeeDataPageModule, FormsModule],
   providers: [
     StatusBar,
     SplashScreen,

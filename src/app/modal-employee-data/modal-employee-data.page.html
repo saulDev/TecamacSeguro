@@ -14,22 +14,22 @@
 
     <ion-item>
       <ion-label position="stacked">Nombre</ion-label>
-      <ion-input value="José Antonio Cabrera Santos" disabled></ion-input>
+      <ion-input [(ngModel)]="nombre" disabled></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label position="stacked">Grado</ion-label>
-      <ion-input value="Policía Tercero" disabled></ion-input>
+      <ion-input [(ngModel)]="grado" disabled></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label position="stacked">ID Empleado</ion-label>
-      <ion-input value="2269" disabled></ion-input>
+      <ion-label position="stacked">Clave de empleado</ion-label>
+      <ion-input [(ngModel)]="clave_empleado" disabled></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label position="stacked">Cuadrante</ion-label>
-      <ion-input value="11" disabled></ion-input>
+      <ion-input value="x" disabled></ion-input>
     </ion-item>
 
   </ion-list>
