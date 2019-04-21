@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {ModalController, NavParams} from '@ionic/angular';
+import {ModalController, NavParams, LoadingController } from '@ionic/angular';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { HTTP } from '@ionic-native/http/ngx';
 import { AlertController } from '@ionic/angular';
@@ -15,14 +15,21 @@ export class ModalEmployeeDataPage implements OnInit {
 
   lat: number;
   lng: number;
+
   buttonDisabled: boolean;
+
   clave_empleado: number;
   nombre: string;
   grado: string;
   cuadrante: number;
+  assigment_id: number;
+
+  loading: any;
+
   cuadrantes: ILatLng[][];
   cuadranteAsignado: ILatLng[];
   subscription: any;
+  url = 'http://c64e9625.ngrok.io/';
 
   constructor(
       private modalCtrl: ModalController,
@@ -30,7 +37,8 @@ export class ModalEmployeeDataPage implements OnInit {
       private geolocation: Geolocation,
       private alertController: AlertController,
       private navParams: NavParams,
-      private quadrant: QuadrantsService
+      private quadrant: QuadrantsService,
+      private loadingController: LoadingController
   ) {
     this.buttonDisabled = true;
     this.getEmployeeData( this.navParams.get('qr_text') );
@@ -38,7 +46,7 @@ export class ModalEmployeeDataPage implements OnInit {
   }
 
   ngOnInit() {
-    
+    console.log('cargado');
   }
 
   private _getCoords() {
@@ -54,6 +62,7 @@ export class ModalEmployeeDataPage implements OnInit {
       } else {
 
       }
+      this.loading.dismiss();
     });
   }
 
@@ -63,11 +72,9 @@ export class ModalEmployeeDataPage implements OnInit {
   }
 
   private getEmployeeData(clave_empleado) {
-    const test_url = 'http://c64e9625.ngrok.io/';
-
-    this.http.get(test_url + 'cops/' + clave_empleado, {}, {Accept: 'application/json'})
+    this.http.get(this.url + 'cops/' + clave_empleado, {}, {Accept: 'application/json'})
         .then(reponse => {
-
+          this.presentLoading();
 
           const employee = JSON.parse(reponse.data);
           this.nombre = employee.nombre;
@@ -76,38 +83,43 @@ export class ModalEmployeeDataPage implements OnInit {
           // @todo Comprobar si el elemento tiene un cuadrante asignado.
           this.cuadrante = employee.assignments[0].quadrant_id;
           this.cuadranteAsignado = this.cuadrantes[employee.assignments[0].quadrant_id - 1];
+          this.assigment_id = employee.assignments[0].id;
 
           this._getCoords();
         })
         .catch(error => {
           this._showAlert('Alerta', 'Elemento no encontrado en el padrón.');
           this.dismiss();
+          this.loading.dismiss();
           console.log(error.status);
           console.log(error.error);
           console.log(error.headers);
         });
   }
 
-  doAttendance() {
-    this._showAlert('Éxito', 'Asistencia registrada correctamente.');
-    this.dismiss();
-  }
-
-  private _sendData() {
-    this.http.get('http://ionic.io', {}, {})
+  sendData() {
+    this.presentLoading();
+    const endpoint = '/api/attendances';
+    this.http.post(this.url + endpoint, {
+      assignment_id: this.assigment_id,
+      lat: this.lat,
+      lng: this.lng
+    }, {Accept: 'application/json'})
         .then(data => {
 
           console.log(data.status);
-          console.log(data.data); // data received by server
+          console.log(data.data);
           console.log(data.headers);
-
+          this._showAlert('Éxito', 'Asistencia registrada correctamente.');
+          this.dismiss();
+          this.loading.dismiss();
         })
         .catch(error => {
 
           console.log(error.status);
-          console.log(error.error); // error message as string
+          console.log(error.error);
           console.log(error.headers);
-
+          this.loading.dismiss();
         });
   }
 
@@ -120,6 +132,13 @@ export class ModalEmployeeDataPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async presentLoading() {
+    this.loading = await this.loadingController.create({
+      message: 'Cargando...'
+    });
+    await this.loading.present();
   }
 
 }

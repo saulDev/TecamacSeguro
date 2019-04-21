@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="dark">
-    <ion-title>Datos de empleado</ion-title>
+    <ion-title>Datos del policía</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="dismiss()">
         <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
@@ -41,7 +41,7 @@
   </ion-list>
 
   <div padding>
-    <ion-button (click)="doAttendance()" [disabled]="buttonDisabled" expand="full" shape="round" color="success">Pasar asistencia</ion-button>
+    <ion-button (click)="sendData()" [disabled]="buttonDisabled" expand="full" shape="round" color="success">Pasar asistencia</ion-button>
   </div>
 
 </ion-content>
