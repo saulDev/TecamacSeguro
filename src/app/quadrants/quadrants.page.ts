@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 import {
   GoogleMaps,
   GoogleMap,
@@ -8,7 +9,7 @@ import {
   Polygon,
   BaseArrayClass,
   ILatLng,
-  LatLng
+  LatLng, Poly
 } from '@ionic-native/google-maps';
 import { QuadrantsService } from '../api/quadrants.service';
 
@@ -21,10 +22,46 @@ export class QuadrantsPage implements OnInit {
 
   map: GoogleMap;
 
+  subscription: any;
+  lat: number;
+  lng: number;
+  cuadranteActual: ILatLng[];
+
   cuadrantes: ILatLng[][];
 
-  constructor(private platform: Platform, private quadrant: QuadrantsService) {
+  constructor(
+      private platform: Platform,
+      private quadrant: QuadrantsService,
+      private geolocation: Geolocation,
+  ) {
     this.cuadrantes = quadrant.all();
+    this._getCoords();
+  }
+
+  private _getCoords() {
+    const watch = this.geolocation.watchPosition();
+    this.subscription = watch.subscribe((data) => {
+      this.lat = data.coords.latitude;
+      this.lng = data.coords.longitude;
+      console.log(this.lat + ', ' +  this.lng);
+
+      for ( let i = 0; i < this.cuadrantes.length; i++ ) {
+        if (Poly.containsLocation({ lat: 19.776817, lng: -98.976382 }, this.cuadrantes[i]) ) {
+          if (this.cuadranteActual !== this.cuadrantes[i]) {
+            this.cuadranteActual = this.cuadrantes[i];
+            this.map.moveCamera({target: this.cuadranteActual});
+            this.map.addPolygonSync({
+              'points': this.cuadranteActual,
+              'strokeColor' : 'rgba(84,0,14)',
+              'fillColor' : 'rgba(84,0,14,0.2)',
+              'strokeWidth': 3
+            });
+          }
+        }
+      }
+
+
+    });
   }
 
 
@@ -721,14 +758,14 @@ export class QuadrantsPage implements OnInit {
       },
     });
 
-    for ( let i = 0; i < this.cuadrantes.length; i++ ) {
+    /* for ( let i = 0; i < this.cuadrantes.length; i++ ) {
       this.map.addPolygonSync({
-        'points': this.cuadrantes[i],
+        'points': this.cuadranteActual,
         'strokeColor' : 'rgba(84,0,14)',
         'fillColor' : 'rgba(84,0,14,0.2)',
         'strokeWidth': 3
       });
-    }
+     }*/
 
     POINTS.forEach((data: any) => {
       data.disableAutoPan = true;
