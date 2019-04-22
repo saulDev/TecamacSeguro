@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {ModalController, NavParams, LoadingController } from '@ionic/angular';
+import {ModalController, NavParams, LoadingController, AlertController } from '@ionic/angular';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { HTTP } from '@ionic-native/http/ngx';
-import { AlertController } from '@ionic/angular';
 import {ILatLng, Poly} from '@ionic-native/google-maps';
 import {QuadrantsService} from '../api/quadrants.service';
 

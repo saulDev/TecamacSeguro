@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {ModalController, NavParams} from '@ionic/angular';
+import {ModalController, NavParams, AlertController } from '@ionic/angular';
 import { HTTP } from '@ionic-native/http/ngx';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 @Component({
   selector: 'app-modal-place-data',
@@ -27,7 +28,9 @@ export class ModalPlaceDataPage implements OnInit {
       private modalCtrl: ModalController,
       private http: HTTP,
       private navParams: NavParams,
-      private camera: Camera
+      private camera: Camera,
+      private webview: WebView,
+      private alertController: AlertController,
   ) {
     const params = this.navParams.get('latLng');
     console.log(params[0].lat);
@@ -46,21 +49,23 @@ export class ModalPlaceDataPage implements OnInit {
       destinationType: this.camera.DestinationType.FILE_URI,
       encodingType:    this.camera.EncodingType.JPEG,
       mediaType:       this.camera.MediaType.PICTURE,
-      sourceType:      this.camera.PictureSourceType.CAMERA
+      sourceType:      this.camera.PictureSourceType.CAMERA,
+      quality:         50
     };
 
     this.camera.getPicture(options).then((imageData) => {
       // imageData is either a base64 encoded string or a file URI
       // If it's base64 (DATA_URL):
       // let base64Image = 'data:image/jpeg;base64,' + imageData;
-      this.cameraImageURI = normalizeURL(imageData);//.replace('file://', '');
+      this.cameraImageURI = this.webview.convertFileSrc(imageData);
     }, (err) => {
       alert('error: ' + err);
     });
   }
 
   sendData() {
-
+    this.modalCtrl.dismiss();
+    this._showAlert('Éxito', 'Visita registrada correctamente.');
   }
 
   getPlaceDataWithLatLng(lat, lng) {
@@ -73,6 +78,17 @@ export class ModalPlaceDataPage implements OnInit {
         .catch(error => {
           console.log(error);
         });
+  }
+
+  async _showAlert(title: string, message: string) {
+    const alert = await this.alertController.create({
+      header: 'Tecámac Seguro',
+      subHeader: title,
+      message: message,
+      buttons: ['Aceptar']
+    });
+
+    await alert.present();
   }
 
 }

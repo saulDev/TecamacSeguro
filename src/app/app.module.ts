@@ -5,6 +5,7 @@ import { ModalEmployeeDataPageModule } from './modal-employee-data/modal-employe
 import { ModalPlaceDataPageModule } from './modal-place-data/modal-place-data.module';
 import { FormsModule } from '@angular/forms';
 import { Camera } from '@ionic-native/camera/ngx';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -27,6 +28,7 @@ import { AppComponent } from './app.component';
     Geolocation,
     HTTP,
     Camera,
+    WebView,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
