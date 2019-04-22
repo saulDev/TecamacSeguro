@@ -55,7 +55,8 @@ export class QuadrantsPage implements OnInit {
       console.log(this.lat + ', ' +  this.lng);
 
       for ( let i = 0; i < this.cuadrantes.length; i++ ) {
-        if (Poly.containsLocation({ lat: 19.776817, lng: -98.976382 }, this.cuadrantes[i]) ) {
+        // if (Poly.containsLocation({ lat: 19.776817, lng: -98.976382 }, this.cuadrantes[i]) ) {
+        if (Poly.containsLocation({ lat: this.lat, lng: this.lng }, this.cuadrantes[i]) ) {
           if (this.cuadranteActual !== this.cuadrantes[i]) {
             this.cuadranteActual = this.cuadrantes[i];
             this.map.moveCamera({target: this.cuadranteActual});
