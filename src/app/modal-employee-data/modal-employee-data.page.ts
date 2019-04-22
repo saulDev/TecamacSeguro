@@ -29,7 +29,7 @@ export class ModalEmployeeDataPage implements OnInit {
   cuadrantes: ILatLng[][];
   cuadranteAsignado: ILatLng[];
   subscription: any;
-  url = 'http://c64e9625.ngrok.io/';
+  url = 'http://1d5f8145.ngrok.io/';
 
   constructor(
       private modalCtrl: ModalController,

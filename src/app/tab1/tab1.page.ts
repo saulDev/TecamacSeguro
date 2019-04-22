@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { ModalEmployeeDataPage } from '../modal-employee-data/modal-employee-data.page';
-
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 @Component({

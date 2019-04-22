@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>Registro de recorrido</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+
+    <ion-item>
+      <ion-label position="stacked">Lugar</ion-label>
+      <ion-textarea [(ngModel)]="place.nombre" disabled></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Clave de empleado</ion-label>
+      <ion-input [(ngModel)]="clave_empleado" disabled></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Observaciones</ion-label>
+      <ion-textarea [(ngModel)]="observaciones" ></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Fotografía</ion-label>
+      <ion-button (click)="takePicture()" expand="full" color="primary">Tomar fotografía</ion-button>
+    </ion-item>
+
+  </ion-list>
+
+  <div padding>
+    <ion-button (click)="sendData()" expand="full" shape="round" color="success">Enviar datos</ion-button>
+  </div>
+
+</ion-content>

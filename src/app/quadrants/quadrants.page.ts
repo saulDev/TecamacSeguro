@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Platform, ModalController } from '@ionic/angular';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { ModalPlaceDataPage } from '../modal-place-data/modal-place-data.page';
+import { QuadrantsService } from '../api/quadrants.service';
 import {
   GoogleMaps,
   GoogleMap,
   GoogleMapsEvent,
-  Marker,
-  Polygon,
   BaseArrayClass,
   ILatLng,
-  LatLng, Poly
+  Poly
 } from '@ionic-native/google-maps';
-import { QuadrantsService } from '../api/quadrants.service';
+
 
 @Component({
   selector: 'app-quadrants',
@@ -33,9 +33,18 @@ export class QuadrantsPage implements OnInit {
       private platform: Platform,
       private quadrant: QuadrantsService,
       private geolocation: Geolocation,
+      private modalController: ModalController
   ) {
     this.cuadrantes = quadrant.all();
     this._getCoords();
+  }
+
+  async presentModal(latLng) {
+    const modal = await this.modalController.create({
+      component: ModalPlaceDataPage,
+      componentProps: { latLng: latLng }
+    });
+    return await modal.present();
   }
 
   private _getCoords() {
@@ -64,7 +73,9 @@ export class QuadrantsPage implements OnInit {
     });
   }
 
-
+  ionViewWillLeave() {
+    this.subscription.unsubscribe();
+  }
 
   async ngOnInit() {
     // Since ngOnInit() is executed before `deviceready` event,
@@ -772,6 +783,7 @@ export class QuadrantsPage implements OnInit {
       this.map.addMarkerSync(data)
       .on(GoogleMapsEvent.INFO_CLICK).subscribe((params) => {
         console.log(params);
+        this.presentModal(params);
       });
     });
 
