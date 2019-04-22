@@ -4,6 +4,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { ModalEmployeeDataPageModule } from './modal-employee-data/modal-employee-data.module';
 import { ModalPlaceDataPageModule } from './modal-place-data/modal-place-data.module';
 import { FormsModule } from '@angular/forms';
+import { Camera } from '@ionic-native/camera/ngx';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -25,6 +26,7 @@ import { AppComponent } from './app.component';
     BarcodeScanner,
     Geolocation,
     HTTP,
+    Camera,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

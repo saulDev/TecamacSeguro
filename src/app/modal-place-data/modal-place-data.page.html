@@ -28,7 +28,9 @@
     </ion-item>
 
     <ion-item>
-      <ion-label position="stacked">Fotografía</ion-label>
+      <div *ngIf="cameraImageURI != null">
+        <img [src]="cameraImageURI">
+      </div>
       <ion-button (click)="takePicture()" expand="full" color="primary">Tomar fotografía</ion-button>
     </ion-item>
 
