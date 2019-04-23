@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import {ModalController, NavParams, AlertController } from '@ionic/angular';
+import {Component, OnInit} from '@angular/core';
+import {ModalController, NavParams, AlertController, LoadingController} from '@ionic/angular';
 import { HTTP } from '@ionic-native/http/ngx';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 @Component({
   selector: 'app-modal-place-data',
@@ -11,9 +13,16 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
 })
 export class ModalPlaceDataPage implements OnInit {
 
+  loading: any;
+
+  subscriptionModal: any;
+  lat: any;
+  lng: any;
+
   clave_empleado = 7722;
   cameraImageURI = null;
-  observaciones: string;
+  rawCameraImageURI = null;
+  observaciones = null;
   url = 'http://1d5f8145.ngrok.io/';
   place: any = {
     id: '',
@@ -31,10 +40,14 @@ export class ModalPlaceDataPage implements OnInit {
       private camera: Camera,
       private webview: WebView,
       private alertController: AlertController,
+      private transfer: FileTransfer,
+      private geolocation: Geolocation,
+      private loadingController: LoadingController
   ) {
     const params = this.navParams.get('latLng');
     console.log(params[0].lat);
     this.getPlaceDataWithLatLng( params[0].lat, params[0].lng );
+    this._getCoords();
   }
 
   ngOnInit() {
@@ -42,6 +55,20 @@ export class ModalPlaceDataPage implements OnInit {
 
   dismiss() {
     this.modalCtrl.dismiss();
+    this.subscriptionModal.unsubscribe();
+  }
+
+  ionViewWillLeave() {
+    this.subscriptionModal.unsubscribe();
+  }
+
+  private _getCoords() {
+    const watchModal = this.geolocation.watchPosition();
+    this.subscriptionModal = watchModal.subscribe((data) => {
+      this.lat = data.coords.latitude;
+      this.lng = data.coords.longitude;
+      console.log(this.lat + ', ' +  this.lng + ' Modal Page');
+    });
   }
 
   takePicture() {
@@ -58,25 +85,60 @@ export class ModalPlaceDataPage implements OnInit {
       // If it's base64 (DATA_URL):
       // let base64Image = 'data:image/jpeg;base64,' + imageData;
       this.cameraImageURI = this.webview.convertFileSrc(imageData);
+      this.rawCameraImageURI = imageData;
     }, (err) => {
       alert('error: ' + err);
     });
   }
 
   sendData() {
-    this.modalCtrl.dismiss();
-    this._showAlert('Éxito', 'Visita registrada correctamente.');
+    if (this.observaciones === null || this.rawCameraImageURI === null) {
+      this._showAlert('Alerta', 'Por favor complete todos los campos.')
+      return false;
+    }
+
+    this.presentLoading();
+    const options: FileUploadOptions = {
+      fileKey: 'picture_file',
+      params: {
+        'place_id': this.place.id,
+        'cop_id': 22,
+        'observaciones': this.observaciones,
+        'lat':  this.lat,
+        'lng':  this.lng
+      },
+      headers: {
+        Accept: 'application/json'
+      }
+    };
+
+    const fileTransfer: FileTransferObject = this.transfer.create();
+    fileTransfer.upload(this.rawCameraImageURI, this.url + 'api/visits', options)
+        .then((data) => {
+          console.log(data);
+          this.dismiss();
+          this.loading.dismiss();
+          this._showAlert('Éxito', 'Visita registrada correctamente.');
+        }, (err) => {
+          this.dismiss();
+          this.loading.dismiss();
+          this._showAlert('Error', 'No se lograron enviar los datos, por favor vuelva a intentar.');
+          console.log(err);
+        });
   }
 
   getPlaceDataWithLatLng(lat, lng) {
+    this.presentLoading();
     this.http.get(this.url + 'api/places/' + lat + '/' + lng, {}, {Accept: 'application/json'})
         .then(reponse => {
           const place = JSON.parse(reponse.data);
           this.place.id = place.id;
           this.place.nombre = place.tipo  + ' ' + place.nombre;
+          this.loading.dismiss();
         })
         .catch(error => {
           console.log(error);
+          this.loading.dismiss();
         });
   }
 
@@ -89,6 +151,13 @@ export class ModalPlaceDataPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async presentLoading() {
+    this.loading = await this.loadingController.create({
+      message: 'Cargando...'
+    });
+    await this.loading.present();
   }
 
 }

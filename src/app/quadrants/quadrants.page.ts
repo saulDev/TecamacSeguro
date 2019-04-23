@@ -36,16 +36,21 @@ export class QuadrantsPage implements OnInit {
       private modalController: ModalController
   ) {
     this.cuadrantes = quadrant.all();
-    this._getCoords();
+
   }
 
   async presentModal(latLng) {
     const modal = await this.modalController.create({
       component: ModalPlaceDataPage,
-      componentProps: { latLng: latLng }
+      componentProps: { latLng: latLng, subscription: this.subscription }
     });
     return await modal.present();
   }
+
+
+    ionViewDidEnter() {
+        this._getCoords();
+    }
 
   private _getCoords() {
     const watch = this.geolocation.watchPosition();
@@ -784,6 +789,7 @@ export class QuadrantsPage implements OnInit {
       this.map.addMarkerSync(data)
       .on(GoogleMapsEvent.INFO_CLICK).subscribe((params) => {
         console.log(params);
+          this.subscription.unsubscribe();
         this.presentModal(params);
       });
     });

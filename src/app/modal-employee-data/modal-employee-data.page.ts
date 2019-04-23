@@ -71,6 +71,10 @@ export class ModalEmployeeDataPage implements OnInit {
     this.subscription.unsubscribe();
   }
 
+  ionViewWillLeave() {
+    this.subscription.unsubscribe();
+  }
+
   private getEmployeeData(clave_empleado) {
     this.http.get(this.url + 'cops/' + clave_empleado, {}, {Accept: 'application/json'})
         .then(reponse => {
