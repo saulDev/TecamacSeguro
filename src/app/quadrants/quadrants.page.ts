@@ -28,6 +28,7 @@ export class QuadrantsPage implements OnInit {
   cuadranteActual: ILatLng[];
 
   cuadrantes: ILatLng[][];
+  cuadranteLabel;
 
   constructor(
       private platform: Platform,
@@ -63,6 +64,7 @@ export class QuadrantsPage implements OnInit {
         // if (Poly.containsLocation({ lat: 19.776817, lng: -98.976382 }, this.cuadrantes[i]) ) {
         if (Poly.containsLocation({ lat: this.lat, lng: this.lng }, this.cuadrantes[i]) ) {
           if (this.cuadranteActual !== this.cuadrantes[i]) {
+            this.cuadranteLabel = i + 1;
             this.cuadranteActual = this.cuadrantes[i];
             this.map.moveCamera({target: this.cuadranteActual});
             this.map.addPolygonSync({
