@@ -55,8 +55,8 @@ export class ModalEmployeeDataPage implements OnInit {
       this.lng = data.coords.longitude;
       console.log(this.lat + ', ' +  this.lng + 'Pase de lista');
       // console.log( Poly.containsLocation({lat: this.lat, lng: this.lng}, this.cuadrantes[0]) );
-      if (Poly.containsLocation({ lat: 19.776817, lng: -98.976382 }, this.cuadranteAsignado) ) {
-      // if (Poly.containsLocation({ lat: this.lat, lng: this.lng }, this.cuadranteAsignado) ) {
+      // if (Poly.containsLocation({ lat: 19.776817, lng: -98.976382 }, this.cuadranteAsignado) ) {
+      if (Poly.containsLocation({ lat: this.lat, lng: this.lng }, this.cuadranteAsignado) ) {
         // @todo colocar una alerta bonita para visualizar que no esta en cuadrante.
         this.buttonDisabled = false;
       } else {

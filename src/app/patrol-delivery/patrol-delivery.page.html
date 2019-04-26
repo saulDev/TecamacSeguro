@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar color="medium">
+    <ion-title>Entrega de patrulla</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-list>
+
+    <ion-item>
+      <ion-label position="stacked">Clave de empleado</ion-label>
+      <ion-input [(ngModel)]="clave_empleado" disabled></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <div *ngIf="frontURI != null">
+        <img [src]="frontURI">
+      </div>
+      <ion-button (click)="takePicture(1)" expand="full" color="primary">Fotografía frontal</ion-button>
+    </ion-item>
+
+    <ion-item>
+      <div *ngIf="backURI != null">
+        <img [src]="backURI">
+      </div>
+      <ion-button (click)="takePicture(2)" expand="full" color="primary">Fotografía trasera</ion-button>
+    </ion-item>
+
+    <ion-item>
+      <div *ngIf="leftURI != null">
+        <img [src]="leftURI">
+      </div>
+      <ion-button (click)="takePicture(3)" expand="full" color="primary">Fotografía lado izquierdo</ion-button>
+    </ion-item>
+
+    <ion-item>
+      <div *ngIf="rightURI != null">
+        <img [src]="rightURI">
+      </div>
+      <ion-button (click)="takePicture(4)" expand="full" color="primary">Fotografía lado derecho</ion-button>
+    </ion-item>
+
+    <ion-item>
+      <div *ngIf="panelURI != null">
+        <img [src]="panelURI">
+      </div>
+      <ion-button (click)="takePicture(5)" expand="full" color="primary">Fotografía tablero</ion-button>
+    </ion-item>
+    <hr>
+    <!--<ion-item>
+      <ion-label position="stacked">Observaciones</ion-label>
+      <ion-textarea [(ngModel)]="observaciones"></ion-textarea>
+    </ion-item>-->
+  </ion-list>
+  <div padding>
+    <ion-button (click)="sendData(1, 0)" expand="full" shape="round" color="success">Enviar datos</ion-button>
+  </div>
+
+
+</ion-content>
