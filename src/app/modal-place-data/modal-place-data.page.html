@@ -23,9 +23,21 @@
     </ion-item>
 
     <ion-item>
+      <ion-label>Observaciones</ion-label>
+      <ion-select  [(ngModel)]="observaciones" okText="Aceptar" cancelText="Cancelar">
+        <ion-select-option value="Todo en orden">Todo en orden</ion-select-option>
+        <ion-select-option value="Sin novedad">Sin novedad</ion-select-option>
+        <ion-select-option value="Alteración al orden">Alteración al orden</ion-select-option>
+        <ion-select-option value="Robo">Robo</ion-select-option>
+        <ion-select-option value="Sospechoso">Sospechoso</ion-select-option>
+        <ion-select-option value="Junta vecinal">Junta vecinal</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!--<ion-item>
       <ion-label position="stacked">Observaciones</ion-label>
       <ion-textarea [(ngModel)]="observaciones" ></ion-textarea>
-    </ion-item>
+    </ion-item>-->
 
     <ion-item>
       <div *ngIf="cameraImageURI != null">
