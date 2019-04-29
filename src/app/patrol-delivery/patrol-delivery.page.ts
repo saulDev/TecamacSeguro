@@ -25,7 +25,7 @@ export class PatrolDeliveryPage implements OnInit {
   rightRaw = null;
   panelRaw = null;
   observaciones = null;
-  url = 'http://1d5f8145.ngrok.io/';
+  url = 'http://192.241.237.15/';
 
   constructor(
       private camera: Camera,

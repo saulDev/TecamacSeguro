@@ -23,7 +23,7 @@ export class ModalPlaceDataPage implements OnInit {
   cameraImageURI = null;
   rawCameraImageURI = null;
   observaciones = null;
-  url = 'http://1d5f8145.ngrok.io/';
+  url = 'http://192.241.237.15/';
   place: any = {
     id: '',
     nombre: '',

@@ -28,7 +28,7 @@ export class ModalEmployeeDataPage implements OnInit {
   cuadrantes: ILatLng[][];
   cuadranteAsignado: ILatLng[];
   subscription: any;
-  url = 'http://1d5f8145.ngrok.io/';
+  url = 'http://192.241.237.15/';
 
   constructor(
       private modalCtrl: ModalController,
