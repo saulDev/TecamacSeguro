@@ -134,11 +134,11 @@ export class ModalPlaceDataPage implements OnInit {
           const place = JSON.parse(reponse.data);
           this.place.id = place.id;
           this.place.nombre = place.tipo  + ' ' + place.nombre;
-          this.loading.dismiss();
+          // this.loading.dismiss();
         })
         .catch(error => {
           console.log(error);
-          this.loading.dismiss();
+          // this.loading.dismiss();
         });
   }
 
@@ -155,6 +155,7 @@ export class ModalPlaceDataPage implements OnInit {
 
   async presentLoading() {
     this.loading = await this.loadingController.create({
+      duration: 2000,
       message: 'Cargando...'
     });
     await this.loading.present();
