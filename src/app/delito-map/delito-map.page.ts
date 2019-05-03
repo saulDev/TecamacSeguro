@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import {LoadingController} from '@ionic/angular';
+import { HTTP } from '@ionic-native/http/ngx';
 import {
   GoogleMaps,
-  GoogleMap
+  GoogleMap, MarkerOptions, Marker
 } from '@ionic-native/google-maps';
 
 @Component({
@@ -11,12 +13,16 @@ import {
 })
 export class DelitoMapPage implements OnInit {
 
+  markers: Marker[] = [];
   map: GoogleMap;
+  loading;
+  url = 'http://aa72b61e.ngrok.io/';
 
-  constructor() { }
+  constructor(private http: HTTP, private loadingController: LoadingController) { }
 
   async ngOnInit() {
     await this._loadMap();
+    this._getVisitedPoints();
   }
 
   _loadMap() {
@@ -31,6 +37,34 @@ export class DelitoMapPage implements OnInit {
         'myLocation': true,
       },
     });
+  }
+
+  async _getVisitedPoints() {
+    try {
+      this.loading = await this.loadingController.create({message: 'Cargando datos...'});
+      this.loading.present();
+      const delitos  = await this.http.get(this.url + 'api/delitos', {}, {Accept: 'application/json'});
+      const data = JSON.parse(delitos.data);
+      console.log(data);
+      await this._setPointsInMap(data);
+      // @todo validar que existan los marcadores.
+      // this.map.setCameraTarget(this.markers[0].getPosition());
+      this.loading.dismiss();
+    } catch (e) {
+      console.log(e);
+      this.loading.dismiss();
+    }
+  }
+
+  _setPointsInMap(delitos) {
+    this.map.clear();
+    for (const delito of delitos) {
+      const options: MarkerOptions  = {
+        title: delito.motivoDetencion,
+        position: {lat: delito.lat, lng: delito.lng}
+      };
+      this.markers.push(this.map.addMarkerSync(options));
+    }
   }
 
 }
