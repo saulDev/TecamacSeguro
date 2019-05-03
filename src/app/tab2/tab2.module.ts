@@ -16,6 +16,10 @@ const routes: Routes = [
       {
         path: 'quadrants',
         loadChildren: '../quadrants/quadrants.module#QuadrantsPageModule'
+      },
+      {
+        path: 'visit-route',
+        loadChildren: '../visit-route/visit-route.module#VisitRoutePageModule'
       }
     ]
   }

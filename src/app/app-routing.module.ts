@@ -4,7 +4,8 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   { path: '', loadChildren: './tabs/tabs.module#TabsPageModule' },
   { path: 'modal-employee-data', loadChildren: './modal-employee-data/modal-employee-data.module#ModalEmployeeDataPageModule' },  { path: 'modal-place-data', loadChildren: './modal-place-data/modal-place-data.module#ModalPlaceDataPageModule' },
-  { path: 'patrol-delivery', loadChildren: './patrol-delivery/patrol-delivery.module#PatrolDeliveryPageModule' }
+  { path: 'patrol-delivery', loadChildren: './patrol-delivery/patrol-delivery.module#PatrolDeliveryPageModule' },
+  { path: 'visit-route', loadChildren: './visit-route/visit-route.module#VisitRoutePageModule' }
 
 ];
 @NgModule({
