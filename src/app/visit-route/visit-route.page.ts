@@ -5,6 +5,7 @@ import {
   GoogleMap,
   Marker,
   MarkerOptions,
+  PolylineOptions,
   GoogleMapsEvent,
   BaseArrayClass,
   ILatLng,
@@ -40,7 +41,9 @@ export class VisitRoutePage implements OnInit {
       const visitedPoints  = await this.http.get(this.url + 'api/visits/cop/' + empleado_id, {}, {Accept: 'application/json'});
       const data = JSON.parse(visitedPoints.data);
       console.log(data);
-      this._setPointsInMap(data);
+      await this._setPointsInMap(data);
+      // @todo validar que existan los marcadores.
+      this.map.setCameraTarget(this.markers[0].getPosition());
       this.loading.dismiss();
     } catch (e) {
       console.log(e);
@@ -49,6 +52,7 @@ export class VisitRoutePage implements OnInit {
   }
 
   _setPointsInMap(visited) {
+    this.map.clear();
     for (const visitedData of visited) {
       const options: MarkerOptions  = {
         title: 'Hello World',
@@ -58,10 +62,32 @@ export class VisitRoutePage implements OnInit {
     }
   }
 
+  viewPath() {
+    for (let i = 0; i < this.markers.length - 1; i++) {
+
+      setTimeout(() => {
+        const firstCoords = this.markers[i].getPosition();
+        const nextCoords = this.markers[i + 1].getPosition();
+        const options: PolylineOptions = {
+          points: [firstCoords, nextCoords],
+          color: '#4DBD33',
+          width: 3
+        };
+        this.map.addPolylineSync(options);
+        this.map.animateCamera({
+          target: nextCoords,
+          duration: 2500
+        });
+      }, i * 2500);
+    }
+  }
+
   _loadMap() {
     this.map = GoogleMaps.create('map_canvas', {
       camera: {
-        target: { lat: 19.661744, lng: -99.022754 }
+        target: { lat: 19.661744, lng: -99.022754 },
+        tilt: 0,
+        zoom: 14
       },
       controls: {
         'myLocationButton': true,
