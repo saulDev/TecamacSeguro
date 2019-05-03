@@ -3,6 +3,8 @@ import { HTTP } from '@ionic-native/http/ngx';
 import {
   GoogleMaps,
   GoogleMap,
+  Marker,
+  MarkerOptions,
   GoogleMapsEvent,
   BaseArrayClass,
   ILatLng,
@@ -19,12 +21,13 @@ import {LoadingController} from '@ionic/angular';
 export class VisitRoutePage implements OnInit {
 
   map: GoogleMap;
+  markers: Marker[] = [];
   url = 'http://aa72b61e.ngrok.io/';
   loading;
 
   constructor(private http: HTTP, private loadingController: LoadingController) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     await this._loadMap();
     this._getVisitedPoints();
   }
@@ -37,6 +40,7 @@ export class VisitRoutePage implements OnInit {
       const visitedPoints  = await this.http.get(this.url + 'api/visits/cop/' + empleado_id, {}, {Accept: 'application/json'});
       const data = JSON.parse(visitedPoints.data);
       console.log(data);
+      this._setPointsInMap(data);
       this.loading.dismiss();
     } catch (e) {
       console.log(e);
@@ -44,8 +48,14 @@ export class VisitRoutePage implements OnInit {
     }
   }
 
-  _setPointsInMap() {
-
+  _setPointsInMap(visited) {
+    for (const visitedData of visited) {
+      const options: MarkerOptions  = {
+        title: 'Hello World',
+        position: {lat: visitedData.lat, lng: visitedData.lng}
+      };
+      this.markers.push(this.map.addMarkerSync(options));
+    }
   }
 
   _loadMap() {
