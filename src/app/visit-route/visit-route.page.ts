@@ -23,7 +23,7 @@ export class VisitRoutePage implements OnInit {
 
   map: GoogleMap;
   markers: Marker[] = [];
-  url = 'http://aa72b61e.ngrok.io/';
+  url = 'http://192.241.237.15/';
   loading;
 
   constructor(private http: HTTP, private loadingController: LoadingController) { }

@@ -1,58 +1,64 @@
 import { Component, OnInit } from '@angular/core';
-import {LoadingController} from '@ionic/angular';
+import {LoadingController, AlertController } from '@ionic/angular';
 import { HTTP } from '@ionic-native/http/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import {QuadrantsService} from '../api/quadrants.service';
+
 import {
-  GoogleMaps,
-  GoogleMap, MarkerOptions, Marker, Poly
+    GoogleMaps,
+    GoogleMap, MarkerOptions, Marker, Poly, ILatLng, GoogleMapsEvent
 } from '@ionic-native/google-maps';
+import {del} from 'selenium-webdriver/http';
+
 
 @Component({
   selector: 'app-delito-map',
   templateUrl: './delito-map.page.html',
   styleUrls: ['./delito-map.page.scss'],
 })
-export class DelitoMapPage {
+export class DelitoMapPage implements OnInit{
 
   markers: Marker[] = [];
   map: GoogleMap;
   loading;
-  url = 'http://aa72b61e.ngrok.io/';
-  lat: number;
-  lng: number;
+  url = 'http://192.241.237.15/';
+  lat = 19.709332;
+  lng = -98.962140;
   subscription: any;
-  mapInited = false;
 
-  constructor(private http: HTTP, private loadingController: LoadingController, private geolocation: Geolocation) { }
+    cuadranteActual: ILatLng[];
+    cuadrantes: ILatLng[][];
+    cuadranteLabel;
 
-  /*async ngOnInit() {
+  constructor(private http: HTTP,
+              private loadingController: LoadingController,
+              private geolocation: Geolocation,
+              private quadrant: QuadrantsService,
+              private alertController: AlertController) {
+      this.cuadrantes = quadrant.all();
+  }
+
+  async ngOnInit() {
     await this._loadMap();
-    if (this.geoIntent > 0) {
-      await this._getCoords();
-    }
-    this._getVisitedPoints();
-  }*/
+  }
 
   ionViewWillLeave() {
     this.subscription.unsubscribe();
-    console.log('Leaving incidencia')
+    console.log('Leaving incidencia');
   }
 
-  async ionViewDidEnter() {
-    if (this.mapInited === false) {
-      await this._loadMap();
+    async ionViewDidEnter() {
+        // this.map.clear();
+        await this._getCoords();
+        console.log('Entering incidencia');
     }
-    this.mapInited = true;
-    await this._getCoords();
-    this._getVisitedPoints();
-    console.log('Entering incidencia');
-  }
 
   async _getCoords() {
     const watch = this.geolocation.watchPosition();
     this.subscription = await watch.subscribe((data) => {
       this.lat = data.coords.latitude;
       this.lng = data.coords.longitude;
+      this._actualQuadrant();
       console.log(this.lat + ', ' +  this.lng);
     });
   }
@@ -60,7 +66,7 @@ export class DelitoMapPage {
   _loadMap() {
     this.map = GoogleMaps.create('map_canvas', {
       camera: {
-        target: { lat: 19.661744, lng: -99.022754 },
+        target: { lat: this.lat, lng: this.lng },
         tilt: 0,
         zoom: 14
       },
@@ -75,7 +81,7 @@ export class DelitoMapPage {
     try {
       this.loading = await this.loadingController.create({message: 'Cargando datos...'});
       this.loading.present();
-      const delitos  = await this.http.get(this.url + 'api/delitos', {}, {Accept: 'application/json'});
+      const delitos  = await this.http.get(this.url + 'api/delitos/cuadrante/' + this.cuadranteLabel, {}, {Accept: 'application/json'});
       const data = JSON.parse(delitos.data);
       console.log(data);
       await this._setPointsInMap(data);
@@ -89,14 +95,50 @@ export class DelitoMapPage {
   }
 
   _setPointsInMap(delitos) {
-    this.map.clear();
     for (const delito of delitos) {
       const options: MarkerOptions  = {
         title: delito.motivoDetencion,
-        position: {lat: delito.lat, lng: delito.lng}
+        position: {lat: delito.lat, lng: delito.lng},
       };
-      this.markers.push(this.map.addMarkerSync(options));
+      // this.markers.push(this.map.addMarkerSync(options));
+        this.map.addMarkerSync(options).on(GoogleMapsEvent.INFO_CLICK).subscribe(() => {
+          const html = 'Cuadrante: ' + delito.cuadrante +
+              '<br>Anotaciones: ' + delito.anotaciones;
+        this._showAlert(delito.motivoDetencion, html);
+      });
     }
+  }
+
+    async _showAlert(title: string, message: string) {
+        const alert = await this.alertController.create({
+            header: 'Tecámac Seguro',
+            subHeader: title,
+            message: message,
+            buttons: ['Aceptar']
+        });
+
+        await alert.present();
+    }
+
+
+  _actualQuadrant() {
+      for ( let i = 0; i < this.cuadrantes.length; i++ ) {
+          // if (Poly.containsLocation({ lat: 19.776817, lng: -98.976382 }, this.cuadrantes[i]) ) {
+          if (Poly.containsLocation({ lat: this.lat, lng: this.lng }, this.cuadrantes[i]) ) {
+              if (this.cuadranteActual !== this.cuadrantes[i]) {
+                  this.cuadranteLabel = i + 1;
+                  this.cuadranteActual = this.cuadrantes[i];
+                  this.map.moveCamera({target: this.cuadranteActual});
+                  this.map.addPolygonSync({
+                      'points': this.cuadranteActual,
+                      'strokeColor' : 'rgba(84,0,14)',
+                      'fillColor' : 'rgba(84,0,14,0.2)',
+                      'strokeWidth': 3
+                  });
+                  this._getVisitedPoints();
+              }
+          }
+      }
   }
 
 }
