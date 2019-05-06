@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {LoadingController} from '@ionic/angular';
 import { HTTP } from '@ionic-native/http/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 import {
   GoogleMaps,
-  GoogleMap, MarkerOptions, Marker
+  GoogleMap, MarkerOptions, Marker, Poly
 } from '@ionic-native/google-maps';
 
 @Component({
@@ -11,18 +12,49 @@ import {
   templateUrl: './delito-map.page.html',
   styleUrls: ['./delito-map.page.scss'],
 })
-export class DelitoMapPage implements OnInit {
+export class DelitoMapPage {
 
   markers: Marker[] = [];
   map: GoogleMap;
   loading;
   url = 'http://aa72b61e.ngrok.io/';
+  lat: number;
+  lng: number;
+  subscription: any;
+  mapInited = false;
 
-  constructor(private http: HTTP, private loadingController: LoadingController) { }
+  constructor(private http: HTTP, private loadingController: LoadingController, private geolocation: Geolocation) { }
 
-  async ngOnInit() {
+  /*async ngOnInit() {
     await this._loadMap();
+    if (this.geoIntent > 0) {
+      await this._getCoords();
+    }
     this._getVisitedPoints();
+  }*/
+
+  ionViewWillLeave() {
+    this.subscription.unsubscribe();
+    console.log('Leaving incidencia')
+  }
+
+  async ionViewDidEnter() {
+    if (this.mapInited === false) {
+      await this._loadMap();
+    }
+    this.mapInited = true;
+    await this._getCoords();
+    this._getVisitedPoints();
+    console.log('Entering incidencia');
+  }
+
+  async _getCoords() {
+    const watch = this.geolocation.watchPosition();
+    this.subscription = await watch.subscribe((data) => {
+      this.lat = data.coords.latitude;
+      this.lng = data.coords.longitude;
+      console.log(this.lat + ', ' +  this.lng);
+    });
   }
 
   _loadMap() {
