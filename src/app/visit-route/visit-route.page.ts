@@ -55,8 +55,8 @@ export class VisitRoutePage implements OnInit {
     this.map.clear();
     for (const visitedData of visited) {
       const options: MarkerOptions  = {
-        title: 'Hello World',
-        position: {lat: visitedData.lat, lng: visitedData.lng}
+        title: visitedData.place.nombre,
+        position: {lat: visitedData.place.lat, lng: visitedData.place.lng}
       };
       this.markers.push(this.map.addMarkerSync(options));
     }
@@ -87,7 +87,7 @@ export class VisitRoutePage implements OnInit {
       camera: {
         target: { lat: 19.661744, lng: -99.022754 },
         tilt: 0,
-        zoom: 14
+        zoom: 18
       },
       controls: {
         'myLocationButton': true,
