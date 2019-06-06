@@ -20,6 +20,10 @@ const routes: Routes = [
       {
         path: 'visit-route',
         loadChildren: '../visit-route/visit-route.module#VisitRoutePageModule'
+      },
+      {
+        path: 'all-quadrants',
+        loadChildren: '../quadrants-all/quadrants-all.module#QuadrantsAllPageModule'
       }
     ]
   }

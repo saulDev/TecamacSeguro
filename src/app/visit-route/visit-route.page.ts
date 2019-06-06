@@ -37,7 +37,7 @@ export class VisitRoutePage implements OnInit {
     try {
       this.loading = await this.loadingController.create({message: 'Cargando datos...'})
       this.loading.present();
-      const empleado_id = 22;
+      const empleado_id = 203;
       const visitedPoints  = await this.http.get(this.url + 'api/visits/cop/' + empleado_id, {}, {Accept: 'application/json'});
       const data = JSON.parse(visitedPoints.data);
       console.log(data);

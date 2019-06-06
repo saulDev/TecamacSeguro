@@ -13,7 +13,7 @@ export class PatrolDeliveryPage implements OnInit {
 
   loading: any;
 
-  clave_empleado = 7722;
+  clave_empleado = 3; // cambio
   frontURI = null;
   backURI = null;
   leftURI = null;
