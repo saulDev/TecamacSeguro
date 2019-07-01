@@ -32,7 +32,31 @@ export class LoginPage implements OnInit {
           console.log(data);
           const token = JSON.parse(data.data);
           this.storage.set('bearer', token.access_token);
+          this.storage.get('quadrants').then((qval) => {
+            if (qval === null) {
+              this.getQuadrants(token.access_token);
+            }
+          });
           this.navCtrl.navigateRoot('/app/tabs');
+        })
+        .catch(error => {
+
+          console.log(error.status);
+          if (error.status === 401) {
+            alert('Correo electrónico o contraseña erróneos');
+          }
+          if (error.status === 400) {
+            alert('Por favor ingresa los campos requeridos');
+          }
+          console.log(error.error);
+        });
+  }
+  getQuadrants(bearer) {
+    this.http.get(this.url + 'api/user/quadrants', {}, {Accept: 'application/json', Authorization: 'Bearer ' + bearer })
+        .then(data => {
+          console.log(data);
+          const response = JSON.parse(data.data);
+          this.storage.set('quadrants', response.quadrants);
         })
         .catch(error => {
 

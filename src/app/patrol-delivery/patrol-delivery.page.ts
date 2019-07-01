@@ -3,6 +3,7 @@ import { LoadingController} from '@ionic/angular';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import {Storage} from '@ionic/storage';
 
 @Component({
   selector: 'app-patrol-delivery',
@@ -26,13 +27,21 @@ export class PatrolDeliveryPage implements OnInit {
   panelRaw = null;
   observaciones = null;
   url = 'http://192.241.237.15/';
+  bearer = null;
 
   constructor(
       private camera: Camera,
       private webview: WebView,
       private transfer: FileTransfer,
-      private loadingController: LoadingController
-  ) { }
+      private loadingController: LoadingController,
+      private storage: Storage
+  ) {
+    storage.get('bearer').then((val) => {
+      if (val !== null) {
+        this.bearer = val;
+      }
+    });
+  }
 
   ngOnInit() {
   }
@@ -127,7 +136,8 @@ export class PatrolDeliveryPage implements OnInit {
       fileKey: fileKey,
       params: params,
       headers: {
-        Accept: 'application/json'
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + this.bearer
       }
     };
 

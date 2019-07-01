@@ -41,4 +41,8 @@ export class Tab1Page implements OnInit {
       console.log('Error', err);
     });
   }
+
+  sendRequestedPosition() {
+    alert('Enviado');
+  }
 }

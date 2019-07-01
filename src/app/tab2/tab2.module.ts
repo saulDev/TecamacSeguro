@@ -24,6 +24,10 @@ const routes: Routes = [
       {
         path: 'all-quadrants',
         loadChildren: '../quadrants-all/quadrants-all.module#QuadrantsAllPageModule'
+      },
+      {
+        path: 'all-zones',
+        loadChildren: '../zones-all/zones-all.module#ZonesAllPageModule'
       }
     ]
   }

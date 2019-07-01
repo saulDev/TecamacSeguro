@@ -12,6 +12,7 @@ import {
   Poly
 } from '@ionic-native/google-maps';
 import {LoadingController} from '@ionic/angular';
+import {Storage} from '@ionic/storage';
 
 
 @Component({
@@ -25,20 +26,30 @@ export class VisitRoutePage implements OnInit {
   markers: Marker[] = [];
   url = 'http://192.241.237.15/';
   loading;
+  bearer = null;
 
-  constructor(private http: HTTP, private loadingController: LoadingController) { }
+  constructor(private http: HTTP, private loadingController: LoadingController, private storage: Storage) {
+  }
 
   async ngOnInit() {
     await this._loadMap();
-    this._getVisitedPoints();
+    this.storage.get('bearer').then((val) => {
+      if (val !== null) {
+        this.bearer = val;
+        this._getVisitedPoints();
+      }
+    });
   }
 
   async _getVisitedPoints() {
     try {
+      console.log(this.bearer)
       this.loading = await this.loadingController.create({message: 'Cargando datos...'})
       this.loading.present();
       const empleado_id = 203;
-      const visitedPoints  = await this.http.get(this.url + 'api/visits/cop/' + empleado_id, {}, {Accept: 'application/json'});
+      const visitedPoints  = await this.http.get(
+          this.url + 'api/visits/cop/me', {},
+          {Accept: 'application/json', Authorization: 'Bearer ' + this.bearer});
       const data = JSON.parse(visitedPoints.data);
       console.log(data);
       await this._setPointsInMap(data);
@@ -56,7 +67,7 @@ export class VisitRoutePage implements OnInit {
     for (const visitedData of visited) {
       const options: MarkerOptions  = {
         title: visitedData.place.nombre,
-        position: {lat: visitedData.place.lat, lng: visitedData.place.lng}
+        position: {lat: visitedData.lat, lng: visitedData.lng}
       };
       this.markers.push(this.map.addMarkerSync(options));
     }

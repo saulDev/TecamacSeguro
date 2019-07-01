@@ -5,6 +5,7 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import {Storage} from '@ionic/storage';
 
 @Component({
   selector: 'app-modal-place-data',
@@ -18,7 +19,7 @@ export class ModalPlaceDataPage implements OnInit {
   subscriptionModal: any;
   lat: any;
   lng: any;
-
+  bearer = null;
   clave_empleado = 7722;
   cameraImageURI = null;
   rawCameraImageURI = null;
@@ -42,12 +43,18 @@ export class ModalPlaceDataPage implements OnInit {
       private alertController: AlertController,
       private transfer: FileTransfer,
       private geolocation: Geolocation,
-      private loadingController: LoadingController
+      private loadingController: LoadingController,
+      private storage: Storage
   ) {
     const params = this.navParams.get('latLng');
     console.log(params[0].lat);
     this.getPlaceDataWithLatLng( params[0].lat, params[0].lng );
     this._getCoords();
+    storage.get('bearer').then((val) => {
+      if (val !== null) {
+        this.bearer = val;
+      }
+    });
   }
 
   ngOnInit() {
@@ -108,7 +115,8 @@ export class ModalPlaceDataPage implements OnInit {
         'lng':  this.lng
       },
       headers: {
-        Accept: 'application/json'
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + this.bearer
       }
     };
 

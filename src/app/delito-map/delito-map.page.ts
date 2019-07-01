@@ -8,15 +8,13 @@ import {
     GoogleMaps,
     GoogleMap, MarkerOptions, Marker, Poly, ILatLng, GoogleMapsEvent
 } from '@ionic-native/google-maps';
-import {del} from 'selenium-webdriver/http';
-
 
 @Component({
   selector: 'app-delito-map',
   templateUrl: './delito-map.page.html',
   styleUrls: ['./delito-map.page.scss'],
 })
-export class DelitoMapPage implements OnInit{
+export class DelitoMapPage implements OnInit {
 
   markers: Marker[] = [];
   map: GoogleMap;

@@ -4,6 +4,7 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { HTTP } from '@ionic-native/http/ngx';
 import {ILatLng, Poly} from '@ionic-native/google-maps';
 import {QuadrantsService} from '../api/quadrants.service';
+import {Storage} from '@ionic/storage';
 
 @Component({
   selector: 'app-modal-employee-data',
@@ -29,6 +30,7 @@ export class ModalEmployeeDataPage implements OnInit {
   cuadranteAsignado: ILatLng[];
   subscription: any;
   url = 'http://192.241.237.15/';
+  bearer = null;
 
   constructor(
       private modalCtrl: ModalController,
@@ -37,11 +39,17 @@ export class ModalEmployeeDataPage implements OnInit {
       private alertController: AlertController,
       private navParams: NavParams,
       private quadrant: QuadrantsService,
-      private loadingController: LoadingController
+      private loadingController: LoadingController,
+      private storage: Storage
   ) {
     this.buttonDisabled = true;
     this.getEmployeeData( this.navParams.get('qr_text') );
     this.cuadrantes = quadrant.all();
+    storage.get('bearer').then((val) => {
+      if (val !== null) {
+        this.bearer = val;
+      }
+    });
   }
 
   ngOnInit() {
@@ -108,7 +116,7 @@ export class ModalEmployeeDataPage implements OnInit {
       assignment_id: this.assigment_id,
       lat: this.lat,
       lng: this.lng
-    }, {Accept: 'application/json'})
+    }, {Accept: 'application/json', Authorization: 'Bearer ' + this.bearer})
         .then(data => {
 
           console.log(data.status);

@@ -9,7 +9,8 @@ const routes: Routes = [
   { path: 'visit-route', loadChildren: './visit-route/visit-route.module#VisitRoutePageModule' },
   { path: 'delito-map', loadChildren: './delito-map/delito-map.module#DelitoMapPageModule' },
   { path: 'quadrants-all', loadChildren: './quadrants-all/quadrants-all.module#QuadrantsAllPageModule' },
-  { path: '', loadChildren: './login/login.module#LoginPageModule' }
+  { path: '', loadChildren: './login/login.module#LoginPageModule' },  { path: 'zones-all', loadChildren: './zones-all/zones-all.module#ZonesAllPageModule' }
+
 
 ];
 @NgModule({
