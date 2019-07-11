@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { ModalEmployeeDataPageModule } from './modal-employee-data/modal-employee-data.module';
 import { ModalPlaceDataPageModule } from './modal-place-data/modal-place-data.module';
+import { SendingPositionPageModule } from './sending-position/sending-position.module';
 import { FormsModule } from '@angular/forms';
 import { Camera } from '@ionic-native/camera/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
@@ -22,7 +23,14 @@ import { AppComponent } from './app.component';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, ModalEmployeeDataPageModule, ModalPlaceDataPageModule, FormsModule, IonicStorageModule.forRoot()],
+  imports: [BrowserModule,
+    IonicModule.forRoot(),
+    AppRoutingModule,
+    ModalEmployeeDataPageModule,
+    ModalPlaceDataPageModule,
+    SendingPositionPageModule,
+    FormsModule,
+    IonicStorageModule.forRoot()],
   providers: [
     StatusBar,
     SplashScreen,

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import {ModalController, NavParams, LoadingController, AlertController } from '@ionic/angular';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { HTTP } from '@ionic-native/http/ngx';
+import {Component, OnInit} from '@angular/core';
+import {AlertController, LoadingController, ModalController, NavParams} from '@ionic/angular';
+import {Geolocation} from '@ionic-native/geolocation/ngx';
+import {HTTP} from '@ionic-native/http/ngx';
 import {ILatLng, Poly} from '@ionic-native/google-maps';
 import {QuadrantsService} from '../api/quadrants.service';
 import {Storage} from '@ionic/storage';
@@ -43,21 +43,19 @@ export class ModalEmployeeDataPage implements OnInit {
       private storage: Storage
   ) {
     this.buttonDisabled = true;
-    this.getEmployeeData( this.navParams.get('qr_text') );
     this.cuadrantes = quadrant.all();
-    storage.get('bearer').then((val) => {
-      if (val !== null) {
-        this.bearer = val;
-      }
-    });
+  }
+  async ngOnInit() {
+    console.log('completo');
+    await this.presentLoading();
+    this.bearer = await this.storage.get('bearer');
+    this.getEmployeeData( this.navParams.get('qr_text') );
+    this._getCoords();
+    this.loading.dismiss();
   }
 
-  ngOnInit() {
-    console.log('cargado');
-  }
-
-  private _getCoords() {
-    const watch = this.geolocation.watchPosition();
+  _getCoords() {
+    const watch = this.geolocation.watchPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
     this.subscription = watch.subscribe((data) => {
       this.lat = data.coords.latitude;
       this.lng = data.coords.longitude;
@@ -65,13 +63,9 @@ export class ModalEmployeeDataPage implements OnInit {
       // console.log( Poly.containsLocation({lat: this.lat, lng: this.lng}, this.cuadrantes[0]) );
       // if (Poly.containsLocation({ lat: 19.776817, lng: -98.976382 }, this.cuadranteAsignado) ) {
       if (Poly.containsLocation({ lat: this.lat, lng: this.lng }, this.cuadranteAsignado) ) {
-        // @todo colocar una alerta bonita para visualizar que no esta en cuadrante.
         this.buttonDisabled = false;
-      } else {
-
       }
-      this.loading.dismiss();
-    });
+    }, (error) => {console.log(error); });
   }
 
   dismiss() {
@@ -80,14 +74,13 @@ export class ModalEmployeeDataPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    console.log('ionViewWillLeave');
     this.subscription.unsubscribe();
   }
 
   private getEmployeeData(clave_empleado) {
-    this.presentLoading();
     this.http.get(this.url + 'cops/' + clave_empleado, {}, {Accept: 'application/json'})
         .then(reponse => {
-
           const employee = JSON.parse(reponse.data);
           this.nombre = employee.nombre;
           this.grado = employee.grade.grado;
@@ -96,16 +89,11 @@ export class ModalEmployeeDataPage implements OnInit {
           this.cuadrante = employee.assignments[0].quadrant_id;
           this.cuadranteAsignado = this.cuadrantes[employee.assignments[0].quadrant_id - 1];
           this.assigment_id = employee.assignments[0].id;
-
-          this._getCoords();
         })
         .catch(error => {
-          this._showAlert('Alerta', 'Elemento no encontrado en el padrón.');
+          this._showAlert('Alerta', 'Elemento no encontrado en el padrón o SIN cuadrante asignado');
           this.dismiss();
-          this.loading.dismiss();
-          console.log(error.status);
-          console.log(error.error);
-          console.log(error.headers);
+          console.log(error);
         });
   }
 

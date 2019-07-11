@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { ModalEmployeeDataPage } from '../modal-employee-data/modal-employee-data.page';
+import { SendingPositionPage } from '../sending-position/sending-position.page';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 @Component({
@@ -27,6 +28,13 @@ export class Tab1Page implements OnInit {
     const modal = await this.modalController.create({
       component: ModalEmployeeDataPage,
       componentProps: { qr_text: this.qr_text }
+    });
+    return await modal.present();
+  }
+
+  async presentSendingPositionModal() {
+    const modal = await this.modalController.create({
+      component: SendingPositionPage
     });
     return await modal.present();
   }
