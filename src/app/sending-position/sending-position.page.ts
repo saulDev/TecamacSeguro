@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 import {Storage} from '@ionic/storage';
 import {Geolocation} from '@ionic-native/geolocation/ngx';
+import {HTTP} from '@ionic-native/http/ngx';
 
 @Component({
   selector: 'app-sending-position',
@@ -13,18 +14,20 @@ export class SendingPositionPage implements OnInit {
   lng;
   interval;
   bearer: string;
-  gpsSendingDataSubscription: any;
-  TIME_IN_MS = 10000;
+  TIME_IN_MS = 30000;
+  url = 'http://192.241.237.15/api/';
 
   constructor(
       private modalCtrl: ModalController,
       private storage: Storage,
       private geolocation: Geolocation,
+      private http: HTTP
   ) { }
 
   async ngOnInit() {
     this.bearer = await this.storage.get('bearer');
-    await this.getSingleCoords();
+    const gps = await this.getSingleCoords();
+    await this.sendCoords(gps.coords.latitude, gps.coords.longitude);
     this.getCoordsOverTime();
   }
 
@@ -35,34 +38,34 @@ export class SendingPositionPage implements OnInit {
 
   getCoordsOverTime() {
     this.interval = setInterval(async () => {
-      await this.getSingleCoords();
+      const gps = await this.getSingleCoords();
+      await this.sendCoords(gps.coords.latitude, gps.coords.longitude);
     }, this.TIME_IN_MS);
   }
 
   async getSingleCoords() {
     try {
-      const coords = await this.geolocation.getCurrentPosition();
-      console.log(coords);
+      return await this.geolocation.getCurrentPosition();
     } catch (e) {
       console.log(e);
     }
   }
 
-  getCoords() {
-    const watch = this.geolocation.watchPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
-    this.gpsSendingDataSubscription = watch.subscribe(this._coordsReceived, this._coordsError);
-  }
-
-  _coordsReceived(data) {
-    this.lat = data.coords.latitude + 1;
-    this.lng = data.coords.longitude;
-    console.log(data);
-  }
-
-  _coordsError(error) {
-    console.log(error);
-  }
-
-  async sendCoords() {
+  async sendCoords(lat, lng) {
+    const endpoint = 'user_location';
+    const body = {
+      lat: lat,
+      lng: lng
+    };
+    const headers = {
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + this.bearer
+    };
+    try {
+      const response = await this.http.post(this.url + endpoint, body, headers);
+      console.log(response);
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
