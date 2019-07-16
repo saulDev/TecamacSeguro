@@ -3,6 +3,7 @@ import {ModalController} from '@ionic/angular';
 import {Storage} from '@ionic/storage';
 import {Geolocation} from '@ionic-native/geolocation/ngx';
 import {HTTP} from '@ionic-native/http/ngx';
+import { Insomnia } from '@ionic-native/insomnia/ngx';
 
 @Component({
   selector: 'app-sending-position',
@@ -22,10 +23,12 @@ export class SendingPositionPage implements OnInit {
       private modalCtrl: ModalController,
       private storage: Storage,
       private geolocation: Geolocation,
-      private http: HTTP
+      private http: HTTP,
+      private insomnia: Insomnia
   ) { }
 
   async ngOnInit() {
+    await this.insomnia.keepAwake();
     this.bearer = await this.storage.get('bearer');
     this.getCoords();
     // const gps = await this.getSingleCoords();
@@ -34,6 +37,7 @@ export class SendingPositionPage implements OnInit {
   }
 
   dismiss() {
+    this.insomnia.allowSleepAgain();
     this.modalCtrl.dismiss();
     // clearInterval(this.interval);
     this.gpsSendingDataSubscription.unsubscribe();

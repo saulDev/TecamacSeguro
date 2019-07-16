@@ -16,6 +16,7 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { HTTP } from '@ionic-native/http/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { IonicStorageModule } from '@ionic/storage';
+import { Insomnia } from '@ionic-native/insomnia/ngx';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -40,6 +41,7 @@ import { AppComponent } from './app.component';
     Camera,
     WebView,
     FileTransfer,
+    Insomnia,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
