@@ -27,7 +27,9 @@ export class ModalEmployeeDataPage implements OnInit {
   loading: any;
 
   cuadrantes: ILatLng[][];
+  cuadrantesAsignados: any[] = [];
   cuadranteAsignado: ILatLng[];
+  quadrant_id: any;
   subscription: any;
   url = 'http://192.241.237.15/';
   bearer = null;
@@ -62,8 +64,11 @@ export class ModalEmployeeDataPage implements OnInit {
       console.log(this.lat + ', ' +  this.lng + 'Pase de lista');
       // console.log( Poly.containsLocation({lat: this.lat, lng: this.lng}, this.cuadrantes[0]) );
       // if (Poly.containsLocation({ lat: 19.776817, lng: -98.976382 }, this.cuadranteAsignado) ) {
-      if (Poly.containsLocation({ lat: this.lat, lng: this.lng }, this.cuadranteAsignado) ) {
-        this.buttonDisabled = false;
+      for (let i = 0; i < this.cuadrantesAsignados.length; i++) {
+        if (Poly.containsLocation({ lat: this.lat, lng: this.lng }, this.cuadrantesAsignados[i].poly) ) {
+          this.quadrant_id = this.cuadrantesAsignados[i].id;
+          this.buttonDisabled = false;
+        }
       }
     }, (error) => {console.log(error); });
   }
@@ -86,8 +91,15 @@ export class ModalEmployeeDataPage implements OnInit {
           this.grado = employee.grade.grado;
           this.clave_empleado = employee.clave_empleado;
           // @todo Comprobar si el elemento tiene un cuadrante asignado.
-          this.cuadrante = employee.assignments[0].quadrant_id;
-          this.cuadranteAsignado = this.cuadrantes[employee.assignments[0].quadrant_id - 1];
+          for (let i = 0; i < employee.assignments.length; i++) {
+            // CORREGIR LABEL
+            this.cuadrante = employee.assignments[0].quadrant_id;
+            console.log(employee.assignments[i].quadrant_id);
+            this.cuadranteAsignado = this.cuadrantes[employee.assignments[i].quadrant_id - 1];
+            this.cuadrantesAsignados.push({id: employee.assignments[i].quadrant_id, poly: this.cuadranteAsignado});
+          }
+
+
           this.assigment_id = employee.assignments[0].id;
         })
         .catch(error => {
@@ -103,7 +115,8 @@ export class ModalEmployeeDataPage implements OnInit {
     this.http.post(this.url + endpoint, {
       assignment_id: this.assigment_id,
       lat: this.lat,
-      lng: this.lng
+      lng: this.lng,
+      quadrant_id: this.quadrant_id
     }, {Accept: 'application/json', Authorization: 'Bearer ' + this.bearer})
         .then(data => {
 
