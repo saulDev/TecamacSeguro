@@ -14,8 +14,9 @@ export class SendingPositionPage implements OnInit {
   lng;
   interval;
   bearer: string;
-  TIME_IN_MS = 30000;
+  TIME_IN_MS = 20000;
   url = 'http://192.241.237.15/api/';
+  gpsSendingDataSubscription;
 
   constructor(
       private modalCtrl: ModalController,
@@ -26,14 +27,16 @@ export class SendingPositionPage implements OnInit {
 
   async ngOnInit() {
     this.bearer = await this.storage.get('bearer');
-    const gps = await this.getSingleCoords();
-    await this.sendCoords(gps.coords.latitude, gps.coords.longitude);
-    this.getCoordsOverTime();
+    this.getCoords();
+    // const gps = await this.getSingleCoords();
+    // await this.sendCoords(gps.coords.latitude, gps.coords.longitude);
+    // this.getCoordsOverTime();
   }
 
   dismiss() {
     this.modalCtrl.dismiss();
-    clearInterval(this.interval);
+    // clearInterval(this.interval);
+    this.gpsSendingDataSubscription.unsubscribe();
   }
 
   getCoordsOverTime() {
@@ -45,7 +48,7 @@ export class SendingPositionPage implements OnInit {
 
   async getSingleCoords() {
     try {
-      return await this.geolocation.getCurrentPosition();
+      return await this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
     } catch (e) {
       console.log(e);
     }
@@ -67,5 +70,33 @@ export class SendingPositionPage implements OnInit {
     } catch (e) {
       console.log(e);
     }
+  }
+
+  getCoords() {
+    const watch = this.geolocation.watchPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
+    this.gpsSendingDataSubscription = watch.subscribe((data) => this._coordsReceived(data), this._coordsError);
+  }
+
+  async _coordsReceived(data) {
+    const endpoint = 'user_location';
+    const body = {
+      lat: data.coords.latitude,
+      lng: data.coords.longitude
+    };
+    const headers = {
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + this.bearer
+    };
+    try {
+      const response = await this.http.post(this.url + endpoint, body, headers);
+      console.log(response);
+    } catch (e) {
+      console.log(e);
+    }
+    console.log(data);
+  }
+
+  _coordsError(error) {
+    console.log(error);
   }
 }
