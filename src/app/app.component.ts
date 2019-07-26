@@ -5,6 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Storage } from '@ionic/storage';
 import {HTTP} from '@ionic-native/http/ngx';
+import { AppUpdate } from '@ionic-native/app-update/ngx';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,8 @@ export class AppComponent {
     private statusBar: StatusBar,
     private storage: Storage,
     private navCtrl: NavController,
-    private http: HTTP
+    private http: HTTP,
+    private appUpdate: AppUpdate,
   ) {
     this.initializeApp();
   }
@@ -27,6 +29,10 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(() => {
+
+      const updateUrl = 'http://192.241.237.15/android/update.xml';
+      this.appUpdate.checkAppUpdate(updateUrl).then(() => { console.log('Update available'); }).catch( (e) => console.log(e));
+
       this.statusBar.backgroundColorByHexString('#511512');
       this.splashScreen.hide();
       this.storage.get('bearer').then((val) => {
