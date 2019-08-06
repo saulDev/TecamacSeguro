@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { Platform, NavController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -6,12 +6,13 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Storage } from '@ionic/storage';
 import {HTTP} from '@ionic-native/http/ngx';
 import { AppUpdate } from '@ionic-native/app-update/ngx';
+import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -20,6 +21,7 @@ export class AppComponent {
     private navCtrl: NavController,
     private http: HTTP,
     private appUpdate: AppUpdate,
+    private socket: Socket
   ) {
     this.initializeApp();
   }
@@ -27,6 +29,10 @@ export class AppComponent {
   url = 'http://192.241.237.15/';
   bearer = null;
 
+  ngOnInit() {
+    this.socket.connect();
+    this.socket.emit('CopLocationUpdate', 'hello world');
+  }
   initializeApp() {
     this.platform.ready().then(() => {
 

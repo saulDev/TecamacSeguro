@@ -55,6 +55,7 @@
     "cordova-sqlite-storage": "3.2.0",
     "core-js": "^2.5.4",
     "device": "0.3.9",
+    "ngx-socket-io": "^2.1.1",
     "phonegap-plugin-barcodescanner": "^8.0.1",
     "rxjs": "~6.3.3",
     "zone.js": "~0.8.29"
