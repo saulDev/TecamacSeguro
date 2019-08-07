@@ -6,7 +6,6 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Storage } from '@ionic/storage';
 import {HTTP} from '@ionic-native/http/ngx';
 import { AppUpdate } from '@ionic-native/app-update/ngx';
-import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +20,6 @@ export class AppComponent implements OnInit {
     private navCtrl: NavController,
     private http: HTTP,
     private appUpdate: AppUpdate,
-    private socket: Socket
   ) {
     this.initializeApp();
   }
@@ -30,12 +28,10 @@ export class AppComponent implements OnInit {
   bearer = null;
 
   ngOnInit() {
-    this.socket.connect();
-    this.socket.emit('CopLocationUpdate', 'hello world');
   }
+
   initializeApp() {
     this.platform.ready().then(() => {
-
       const updateUrl = 'http://192.241.237.15/android/update.xml';
       this.appUpdate.checkAppUpdate(updateUrl).then(() => { console.log('Update available'); }).catch( (e) => console.log(e));
 
