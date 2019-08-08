@@ -7,6 +7,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { BackgroundGeolocation, BackgroundGeolocationConfig, BackgroundGeolocationResponse,
   BackgroundGeolocationEvents, BackgroundGeolocationLocationProvider } from '@ionic-native/background-geolocation/ngx';
 import { Storage } from '@ionic/storage';
+import {HTTP} from '@ionic-native/http/ngx';
 
 @Component({
   selector: 'app-tab1',
@@ -22,30 +23,47 @@ export class Tab1Page implements OnInit {
       private platform: Platform,
       private modalController: ModalController,
       private backgroundGeolocation: BackgroundGeolocation,
-      private storage: Storage
+      private storage: Storage,
+      private http: HTTP,
   ) { }
 
   async ngOnInit() {
     await this.platform.ready();
-    this.storage.get('bearer').then((val) => {
-      if (val !== null) {
-        this.backGroundPosition(val);
-      }
-    });
+    const val = await this.storage.get('bearer');
+    let user = await this.storage.get('user');
+    if (user === null) {
+        const headers = {
+            Accept: 'application/json',
+            Authorization: 'Bearer ' + val
+        };
+        try {
+            const response  = await this.http.get('http://192.241.237.15/api/user/quadrants', {}, headers);
+            user = JSON.parse(response.data);
+            await this.storage.set('user', user);
+            console.log(user);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    if (val !== null) {
+      this.backGroundPosition(val, user);
+    }
   }
 
-  backGroundPosition(token) {
+  backGroundPosition(token, user) {
     const config: BackgroundGeolocationConfig = {
       locationProvider: BackgroundGeolocationLocationProvider.RAW_PROVIDER,
       desiredAccuracy: 0,
       stationaryRadius: 0,
       distanceFilter: 0,
       startOnBoot: false,
-      interval: 3000,
-      url: 'http://192.241.237.15/api/emit_location',
+      interval: 1000,
+      url: 'https://websocket.tecamac.gob.mx/api/broadcasting/user_location_from_background',
       postTemplate: {
         lat: '@latitude',
-        lng: '@longitude'
+        lng: '@longitude',
+        name: user.name,
+        user_id: user.id
       },
       httpHeaders: {
         Accept: 'application/json',

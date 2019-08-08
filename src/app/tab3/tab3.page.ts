@@ -14,6 +14,7 @@ export class Tab3Page {
   logout() {
     this.storage.set('quadrants', null);
     this.storage.set('bearer', null);
+    this.storage.set('user', null);
     this.navCtrl.navigateRoot('/');
   }
 }

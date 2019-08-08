@@ -28,9 +28,9 @@ export class SendingPositionPage implements OnInit {
   ) { }
 
   async ngOnInit() {
-    await this.insomnia.keepAwake();
-    this.bearer = await this.storage.get('bearer');
-    this.getCoords();
+    // await this.insomnia.keepAwake();
+    // this.bearer = await this.storage.get('bearer');
+    // this.getCoords();
     // const gps = await this.getSingleCoords();
     // await this.sendCoords(gps.coords.latitude, gps.coords.longitude);
     // this.getCoordsOverTime();
