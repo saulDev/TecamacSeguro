@@ -56,8 +56,12 @@ export class Tab1Page implements OnInit {
       desiredAccuracy: 0,
       stationaryRadius: 0,
       distanceFilter: 0,
-      startOnBoot: false,
+      startOnBoot: true,
       interval: 1000,
+      maxLocations: 0,
+      startForeground: true,
+      syncThreshold: '0',
+      stopOnStillActivity: false,
       url: 'https://websocket.tecamac.gob.mx/api/broadcasting/user_location_from_background',
       postTemplate: {
         lat: '@latitude',
@@ -69,8 +73,8 @@ export class Tab1Page implements OnInit {
         Accept: 'application/json',
         Authorization: 'Bearer ' + token
       },
-      debug: false, //  enable this hear sounds for background-geolocation life-cycle.
-      stopOnTerminate: true, // enable this to clear background location settings when the app terminates
+      debug: true, //  enable this hear sounds for background-geolocation life-cycle.
+      stopOnTerminate: false, // enable this to clear background location settings when the app terminates
     };
     // this.socket.connect();
     this.backgroundGeolocation.configure(config)

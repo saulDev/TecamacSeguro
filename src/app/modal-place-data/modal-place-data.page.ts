@@ -20,7 +20,7 @@ export class ModalPlaceDataPage implements OnInit {
   lat: any;
   lng: any;
   bearer = null;
-  clave_empleado = 7722;
+  clave_empleado = null;
   cameraImageURI = null;
   rawCameraImageURI = null;
   observaciones = null;
@@ -53,6 +53,11 @@ export class ModalPlaceDataPage implements OnInit {
     storage.get('bearer').then((val) => {
       if (val !== null) {
         this.bearer = val;
+      }
+    });
+    storage.get('user').then((val) => {
+      if (val !== null) {
+        this.clave_empleado = val.name;
       }
     });
   }
