@@ -6,6 +6,7 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import {Storage} from '@ionic/storage';
+import { EnvService } from '../services/env.service';
 
 @Component({
   selector: 'app-modal-place-data',
@@ -24,7 +25,6 @@ export class ModalPlaceDataPage implements OnInit {
   cameraImageURI = null;
   rawCameraImageURI = null;
   observaciones = null;
-  url = 'http://192.241.237.15/';
   place: any = {
     id: '',
     nombre: '',
@@ -44,25 +44,26 @@ export class ModalPlaceDataPage implements OnInit {
       private transfer: FileTransfer,
       private geolocation: Geolocation,
       private loadingController: LoadingController,
-      private storage: Storage
-  ) {
-    const params = this.navParams.get('latLng');
-    console.log(params[0].lat);
-    this.getPlaceDataWithLatLng( params[0].lat, params[0].lng );
-    this._getCoords();
-    storage.get('bearer').then((val) => {
-      if (val !== null) {
-        this.bearer = val;
-      }
-    });
-    storage.get('user').then((val) => {
-      if (val !== null) {
-        this.clave_empleado = val.name;
-      }
-    });
-  }
+      private storage: Storage,
+      private env: EnvService
+  ) {  }
 
   ngOnInit() {
+    this.initModal();
+  }
+
+  initModal = async () => {
+    const token = await this.storage.get('bearer');
+    if (token !== null) {
+      this.bearer = token;
+    }
+    const user = await this.storage.get('user');
+    if (user !== null) {
+      this.clave_empleado = user.name;
+    }
+    const params = this.navParams.get('latLng');
+    await this.getPlaceDataWithLatLng( params[0].lat, params[0].lng );
+    this._getCoords();
   }
 
   dismiss() {
@@ -83,33 +84,35 @@ export class ModalPlaceDataPage implements OnInit {
     });
   }
 
-  takePicture() {
+  takePicture = async () => {
     const options: CameraOptions = {
-      destinationType: this.camera.DestinationType.FILE_URI,
-      encodingType:    this.camera.EncodingType.JPEG,
-      mediaType:       this.camera.MediaType.PICTURE,
-      sourceType:      this.camera.PictureSourceType.CAMERA,
-      quality:         50
+      destinationType:    this.camera.DestinationType.FILE_URI,
+      encodingType:       this.camera.EncodingType.JPEG,
+      mediaType:          this.camera.MediaType.PICTURE,
+      sourceType:         this.camera.PictureSourceType.CAMERA,
+      quality:            50,
+      targetWidth:        600,
+      targetHeight:       800,
+      correctOrientation: true,
+      saveToPhotoAlbum:   true
     };
 
-    this.camera.getPicture(options).then((imageData) => {
-      // imageData is either a base64 encoded string or a file URI
-      // If it's base64 (DATA_URL):
-      // let base64Image = 'data:image/jpeg;base64,' + imageData;
+    try {
+      const imageData = await this.camera.getPicture(options);
       this.cameraImageURI = this.webview.convertFileSrc(imageData);
       this.rawCameraImageURI = imageData;
-    }, (err) => {
-      alert('error: ' + err);
-    });
+    } catch (e) {
+      alert(e);
+    }
   }
 
-  sendData() {
+  sendData = async () => {
     if (this.observaciones === null || this.rawCameraImageURI === null) {
-      this._showAlert('Alerta', 'Por favor complete todos los campos.')
+      await this._showAlert('Alerta', 'Por favor complete todos los campos.');
       return false;
     }
 
-    this.presentLoading();
+    await this.presentLoading();
     const options: FileUploadOptions = {
       fileKey: 'picture_file',
       params: {
@@ -124,35 +127,31 @@ export class ModalPlaceDataPage implements OnInit {
         Authorization: 'Bearer ' + this.bearer
       }
     };
-
     const fileTransfer: FileTransferObject = this.transfer.create();
-    fileTransfer.upload(this.rawCameraImageURI, this.url + 'api/visits', options)
-        .then((data) => {
-          console.log(data);
-          this.dismiss();
-          this.loading.dismiss();
-          this._showAlert('Éxito', 'Visita registrada correctamente.');
-        }, (err) => {
-          this.dismiss();
-          this.loading.dismiss();
-          this._showAlert('Error', 'No se lograron enviar los datos, por favor vuelva a intentar.');
-          console.log(err);
-        });
+    try {
+      await fileTransfer.upload(this.rawCameraImageURI, this.env.API_URL + 'api/visits', options);
+      await this.loading.dismiss();
+      await this._showAlert('Éxito', 'Visita registrada correctamente.');
+      this.dismiss();
+    } catch (e) {
+      await this.loading.dismiss();
+      await this._showAlert('Error', 'No se lograron enviar los datos, por favor vuelva a intentar.');
+      alert(e);
+    }
   }
 
-  getPlaceDataWithLatLng(lat, lng) {
-    this.presentLoading();
-    this.http.get(this.url + 'api/places/' + lat + '/' + lng, {}, {Accept: 'application/json'})
-        .then(reponse => {
-          const place = JSON.parse(reponse.data);
-          this.place.id = place.id;
-          this.place.nombre = place.tipo  + ' ' + place.nombre;
-          // this.loading.dismiss();
-        })
-        .catch(error => {
-          console.log(error);
-          // this.loading.dismiss();
-        });
+  getPlaceDataWithLatLng = async (lat, lng) => {
+    try {
+      await this.presentLoading();
+      const response = await this.http.get(this.env.API_URL + 'api/places/' + lat + '/' + lng, {}, {Accept: 'application/json'});
+      const place = JSON.parse(response.data);
+      this.place.id = place.id;
+      this.place.nombre = place.tipo + ' ' + place.nombre;
+      this.loading.dismiss();
+    } catch (e) {
+      alert(e);
+      this.loading.dismiss();
+    }
   }
 
   async _showAlert(title: string, message: string) {
@@ -168,7 +167,6 @@ export class ModalPlaceDataPage implements OnInit {
 
   async presentLoading() {
     this.loading = await this.loadingController.create({
-      duration: 2000,
       message: 'Cargando...'
     });
     await this.loading.present();
