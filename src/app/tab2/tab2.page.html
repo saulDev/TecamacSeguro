@@ -31,6 +31,12 @@
       <ion-icon slot="start" color="dark" name="share-alt"></ion-icon>
       <ion-label>Catálogo de destinos</ion-label>
     </ion-item>
+
+    <ion-item (click)="presentModal()">
+      <ion-icon slot="start" color="dark" name="flag"></ion-icon>
+      <ion-label>Registrar visita</ion-label>
+    </ion-item>
+
     <ion-item routerLink="/app/tabs/tab2/visit-route" routerDirection="forward">
       <ion-icon slot="start" color="dark" name="git-network"></ion-icon>
       <ion-label>Ver recorrido</ion-label>

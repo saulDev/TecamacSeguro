@@ -46,7 +46,7 @@ export class Tab1Page implements OnInit {
         }
     }
     if (val !== null) {
-      this.backGroundPosition(val, user);
+      // this.backGroundPosition(val, user);
     }
   }
 

@@ -16,6 +16,7 @@ import { EnvService } from '../services/env.service';
 export class ModalPlaceDataPage implements OnInit {
 
   loading: any;
+  disabled = true;
 
   subscriptionModal: any;
   lat: any;
@@ -26,7 +27,7 @@ export class ModalPlaceDataPage implements OnInit {
   rawCameraImageURI = null;
   observaciones = null;
   place: any = {
-    id: '',
+    id: 0,
     nombre: '',
     propiedad: '',
     tipo: '',
@@ -80,7 +81,7 @@ export class ModalPlaceDataPage implements OnInit {
     this.subscriptionModal = watchModal.subscribe((data) => {
       this.lat = data.coords.latitude;
       this.lng = data.coords.longitude;
-      console.log(this.lat + ', ' +  this.lng + ' Modal Page');
+      // console.log(this.lat + ', ' +  this.lng + ' Modal Page');
     });
   }
 
@@ -117,6 +118,7 @@ export class ModalPlaceDataPage implements OnInit {
       fileKey: 'picture_file',
       params: {
         'place_id': this.place.id,
+        'nombre': this.place.nombre,
         'cop_id': 22,
         'observaciones': this.observaciones,
         'lat':  this.lat,
@@ -134,23 +136,27 @@ export class ModalPlaceDataPage implements OnInit {
       await this._showAlert('Éxito', 'Visita registrada correctamente.');
       this.dismiss();
     } catch (e) {
+      console.log(e);
       await this.loading.dismiss();
       await this._showAlert('Error', 'No se lograron enviar los datos, por favor vuelva a intentar.');
-      alert(e);
     }
   }
 
   getPlaceDataWithLatLng = async (lat, lng) => {
-    try {
-      await this.presentLoading();
-      const response = await this.http.get(this.env.API_URL + 'api/places/' + lat + '/' + lng, {}, {Accept: 'application/json'});
-      const place = JSON.parse(response.data);
-      this.place.id = place.id;
-      this.place.nombre = place.tipo + ' ' + place.nombre;
-      this.loading.dismiss();
-    } catch (e) {
-      alert(e);
-      this.loading.dismiss();
+    if (lat !== 0 && lng !== 0) {
+      try {
+        await this.presentLoading();
+        const response = await this.http.get(this.env.API_URL + 'api/places/' + lat + '/' + lng, {}, {Accept: 'application/json'});
+        const place = JSON.parse(response.data);
+        this.place.id = place.id;
+        this.place.nombre = place.tipo + ' ' + place.nombre;
+        this.loading.dismiss();
+      } catch (e) {
+        alert(e);
+        this.loading.dismiss();
+      }
+    } else {
+      this.disabled = false;
     }
   }
 
