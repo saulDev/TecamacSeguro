@@ -18,7 +18,6 @@ import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 import { Insomnia } from '@ionic-native/insomnia/ngx';
 import { AppUpdate } from '@ionic-native/app-update/ngx';
-import { BackgroundGeolocation } from '@ionic-native/background-geolocation/ngx';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -45,7 +44,6 @@ import { AppComponent } from './app.component';
     FileTransfer,
     Insomnia,
     AppUpdate,
-    BackgroundGeolocation,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

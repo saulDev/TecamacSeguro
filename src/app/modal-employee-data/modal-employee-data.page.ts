@@ -32,6 +32,7 @@ export class ModalEmployeeDataPage implements OnInit {
   quadrant_id: any;
   subscription: any;
   url = 'http://192.241.237.15/';
+  urlComisaria = 'https://sistema.comisaria.tecamac.gob.mx/api/';
   bearer = null;
 
   constructor(
@@ -59,8 +60,12 @@ export class ModalEmployeeDataPage implements OnInit {
   _getCoords() {
     const watch = this.geolocation.watchPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
     this.subscription = watch.subscribe((data) => {
-      this.lat = data.coords.latitude;
-      this.lng = data.coords.longitude;
+      if ('coords' in data) {
+        this.lat = data.coords.latitude;
+      }
+      if ('coords' in data) {
+        this.lng = data.coords.longitude;
+      }
       console.log(this.lat + ', ' +  this.lng + 'Pase de lista');
       // console.log( Poly.containsLocation({lat: this.lat, lng: this.lng}, this.cuadrantes[0]) );
       // if (Poly.containsLocation({ lat: 19.776817, lng: -98.976382 }, this.cuadranteAsignado) ) {
@@ -84,23 +89,23 @@ export class ModalEmployeeDataPage implements OnInit {
   }
 
   private getEmployeeData(clave_empleado) {
-    this.http.get(this.url + 'cops/' + clave_empleado, {}, {Accept: 'application/json'})
+    this.http.get(this.urlComisaria + 'employees/' + clave_empleado + '/show', {}, {Accept: 'application/json'})
         .then(reponse => {
           const employee = JSON.parse(reponse.data);
-          this.nombre = employee.nombre;
-          this.grado = employee.grade.grado;
-          this.clave_empleado = employee.clave_empleado;
+          this.nombre = employee.paterno + ' ' + employee.materno + ' ' + employee.nombre;
+          this.grado = employee.assignment.job.puesto;
+          this.clave_empleado = employee.id;
           // @todo Comprobar si el elemento tiene un cuadrante asignado.
-          for (let i = 0; i < employee.assignments.length; i++) {
+          /*for (let i = 0; i < employee.assignments.length; i++) {
             // CORREGIR LABEL
             this.cuadrante = employee.assignments[0].quadrant_id;
             console.log(employee.assignments[i].quadrant_id);
             this.cuadranteAsignado = this.cuadrantes[employee.assignments[i].quadrant_id - 1];
             this.cuadrantesAsignados.push({id: employee.assignments[i].quadrant_id, poly: this.cuadranteAsignado});
-          }
+          }*/
 
 
-          this.assigment_id = employee.assignments[0].id;
+          // this.assigment_id = employee.assignments[0].id;
         })
         .catch(error => {
           this._showAlert('Alerta', 'Elemento no encontrado en el padrón o SIN cuadrante asignado');

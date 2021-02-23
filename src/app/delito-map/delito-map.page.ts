@@ -54,8 +54,12 @@ export class DelitoMapPage implements OnInit {
   async _getCoords() {
     const watch = this.geolocation.watchPosition();
     this.subscription = await watch.subscribe((data) => {
-      this.lat = data.coords.latitude;
-      this.lng = data.coords.longitude;
+        if ('coords' in data) {
+            this.lat = data.coords.latitude;
+        }
+        if ('coords' in data) {
+            this.lng = data.coords.longitude;
+        }
       this._actualQuadrant();
       console.log(this.lat + ', ' +  this.lng);
     });

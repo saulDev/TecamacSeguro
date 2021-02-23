@@ -79,8 +79,12 @@ export class ModalPlaceDataPage implements OnInit {
   private _getCoords() {
     const watchModal = this.geolocation.watchPosition();
     this.subscriptionModal = watchModal.subscribe((data) => {
-      this.lat = data.coords.latitude;
-      this.lng = data.coords.longitude;
+      if ('coords' in data) {
+        this.lat = data.coords.latitude;
+      }
+      if ('coords' in data) {
+        this.lng = data.coords.longitude;
+      }
       // console.log(this.lat + ', ' +  this.lng + ' Modal Page');
     });
   }

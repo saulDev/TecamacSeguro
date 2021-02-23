@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="1005" id="mx.gob.tecamac.PoliciaProximidad" version="0.0.5" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="1006" id="mx.gob.tecamac.PoliciaProximidad" version="0.0.6" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Policía de Proximidad</name>
     <description>App de seguridad para el H. Ayuntamiento de Tecamac</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">DevTeam</author>
@@ -87,6 +87,7 @@
         <variable name="PLAY_SERVICES_VERSION" value="15.0.1" />
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+" />
     </plugin>
+    <preference name="GOOGLE_MAPS_ANDROID_API_KEY" value="AIzaSyDlVzNiBXY8vgPjIpP1U_LWb06wCJFJiE4" />
     <plugin name="phonegap-plugin-barcodescanner" spec="8.0.1">
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+" />
     </plugin>

@@ -56,8 +56,12 @@ export class QuadrantsPage implements OnInit {
   private _getCoords() {
     const watch = this.geolocation.watchPosition();
     this.subscription = watch.subscribe((data) => {
-      this.lat = data.coords.latitude;
-      this.lng = data.coords.longitude;
+      if ('coords' in data) {
+        this.lat = data.coords.latitude;
+      }
+      if ('coords' in data) {
+        this.lng = data.coords.longitude;
+      }
       console.log(this.lat + ', ' +  this.lng);
 
       for ( let i = 0; i < this.cuadrantes.length; i++ ) {
